@@ -8,15 +8,16 @@ module.exports = {
     extend: {
       colors: {
         'exeed': {
-          blue: '#003d82',
-          gray: '#6b7280',
-          dark: '#111827',
-          light: '#f8fafc'
+          dark: '#3e4651',
+          gray: '#d2d6db',
+          light: '#ffffff',
+          black: '#1a1a1a',
+          header: '#0e1214'
         }
       },
       fontFamily: {
-        sans: ['Nunito Sans', 'Nunito-Sans', 'Arial', 'sans-serif'], // для обычного текста
-        heading: ['Tactic Sans', 'Nunito Sans', 'Arial', 'sans-serif'], // для заголовков
+        sans: ['Nunito Sans', 'Nunito-Sans', 'Arial', 'sans-serif'],
+        heading: ['Tactic Sans', 'Nunito Sans', 'Arial', 'sans-serif'],
       }
     },
   },
