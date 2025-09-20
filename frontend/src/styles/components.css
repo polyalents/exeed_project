@@ -1,0 +1,16 @@
+/* Компоненты EXEED */
+.btn-primary {
+  @apply bg-exeed-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300;
+}
+
+.btn-secondary {
+  @apply bg-white text-exeed-blue border-2 border-exeed-blue px-6 py-3 rounded-lg font-semibold hover:bg-exeed-blue hover:text-white transition-colors duration-300;
+}
+
+.section-padding {
+  @apply px-4 lg:px-8 xl:px-16;
+}
+
+.hero-gradient {
+  @apply bg-gradient-to-br from-exeed-blue to-blue-800;
+}

@@ -1,0 +1,23 @@
+@import './fonts.css';
+@import './globals.css';
+@import './components.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Кастомные стили для EXEED */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Tactic Sans', 'Nunito Sans', 'Arial', 'sans-serif';
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* Дополнительные компоненты можно добавлять здесь */
+}
+
+@layer utilities {
+  /* Дополнительные утилиты можно добавлять здесь */
+}

@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'Tactic Sans';
+  src: url('../assets/fonts/Шрифт Tactic.Sans/EM-TacticSans/TacticSans-Reg.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tactic Sans';
+  src: url('../assets/fonts/Шрифт Tactic.Sans/EM-TacticSans/TacticSans-Med.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tactic Sans';
+  src: url('../assets/fonts/Шрифт Tactic.Sans/EM-TacticSans/TacticSans-Bld.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
