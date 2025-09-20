@@ -1,0 +1,24 @@
+#!/bin/bash
+cd /root/exeed_project
+source venv/bin/activate
+
+# Запускаем API через gunicorn
+cd backend
+gunicorn --daemon --workers 3 --bind 127.0.0.1:5002 --pid /tmp/exeed-api.pid app:app
+cd ..
+
+# Запускаем админку через gunicorn  
+cd admin
+gunicorn --daemon --workers 2 --bind 127.0.0.1:5001 --pid /tmp/exeed-admin.pid admin_app:app
+cd ..
+
+# Билдим и подготавливаем фронтенд для nginx
+cd frontend
+npm run build
+cd ..
+
+# Копируем собранный фронтенд в nginx папку
+sudo cp -r frontend/dist/* /var/www/exeed/
+sudo chown -R www-data:www-data /var/www/exeed/
+
+echo "All EXEED services started in daemon mode"
