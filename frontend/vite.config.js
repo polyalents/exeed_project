@@ -6,5 +6,6 @@ export default defineConfig({
   server: {
     port: 3001,
     host: true
-  }
+  },
+  assetsInclude: ['**/*.otf', '**/*.ttf', '**/*.woff', '**/*.woff2']
 })
