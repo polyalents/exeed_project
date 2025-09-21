@@ -119,7 +119,7 @@
   height: 48px;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+  transition: color 0.4s ease;
 }
 
 .js-button:hover {
@@ -128,8 +128,8 @@
 
 .js-button .border {
   position: absolute;
-  background: #fff;
-  transition: transform 0.3s ease;
+  background: #d2d6db;
+  transition: transform 0.4s ease;
 }
 
 /* Верх */
@@ -138,7 +138,6 @@
   left: 0;
   width: 100%;
   height: 2px;
-  transform: scaleX(0);
   transform-origin: left;
 }
 
@@ -148,7 +147,6 @@
   right: 0;
   width: 2px;
   height: 100%;
-  transform: scaleY(0);
   transform-origin: top;
 }
 
@@ -158,7 +156,6 @@
   left: 0;
   width: 100%;
   height: 2px;
-  transform: scaleX(0);
   transform-origin: right;
 }
 
@@ -168,29 +165,43 @@
   left: 0;
   width: 2px;
   height: 100%;
-  transform: scaleY(0);
   transform-origin: bottom;
 }
 
-/* Активные состояния */
-.js-button.animate .border.top { 
-  transform: scaleX(1); 
-  background: #d2d6db;
+/* ===== Варианты кнопок ===== */
+
+/* Кнопка с верхом и правым бордером видимыми */
+.js-button.top-right .border.top,
+.js-button.top-right .border.right {
+  transform: scale(1);
 }
-.js-button.animate .border.right { 
-  transform: scaleY(1); 
-  transition-delay: 0.3s; 
-  background: #d2d6db;
+
+.js-button.top-right .border.bottom,
+.js-button.top-right .border.left {
+  transform: scale(0);
 }
-.js-button.animate .border.bottom { 
-  transform: scaleX(1); 
-  transition-delay: 0.6s; 
-  background: #d2d6db;
+
+.js-button.top-right:hover .border.bottom,
+.js-button.top-right:hover .border.left {
+  transform: scale(1);
+  transition-delay: 0.1s;
 }
-.js-button.animate .border.left { 
-  transform: scaleY(1); 
-  transition-delay: 0.9s; 
-  background: #d2d6db;
+
+/* Кнопка с низом и левым бордером видимыми */
+.js-button.bottom-left .border.bottom,
+.js-button.bottom-left .border.left {
+  transform: scale(1);
+}
+
+.js-button.bottom-left .border.top,
+.js-button.bottom-left .border.right {
+  transform: scale(0);
+}
+
+.js-button.bottom-left:hover .border.top,
+.js-button.bottom-left:hover .border.right {
+  transform: scale(1);
+  transition-delay: 0.1s;
 }
 
 .slide-indicators {
@@ -252,6 +263,49 @@
     min-width: 100%;
     height: 44px;
     font-size: 0.85rem;
+  }
+
+  /* Мобильная версия кнопок - упрощенная анимация */
+  .js-button .border.top,
+  .js-button .border.bottom {
+    transform-origin: left;
+  }
+
+  /* Для мобильных - показываем только нижнюю рамку по умолчанию */
+  .js-button.top-right .border.top,
+  .js-button.top-right .border.right {
+    transform: scale(0);
+  }
+
+  .js-button.top-right .border.bottom {
+    transform: scale(1);
+  }
+
+  .js-button.top-right .border.left {
+    transform: scale(0);
+  }
+
+  .js-button.top-right:hover .border.left,
+  .js-button.top-right:hover .border.right {
+    transform: scale(1);
+  }
+
+  .js-button.bottom-left .border.bottom {
+    transform: scale(1);
+  }
+
+  .js-button.bottom-left .border.left {
+    transform: scale(0);
+  }
+
+  .js-button.bottom-left .border.top,
+  .js-button.bottom-left .border.right {
+    transform: scale(0);
+  }
+
+  .js-button.bottom-left:hover .border.left,
+  .js-button.bottom-left:hover .border.right {
+    transform: scale(1);
   }
 }
 

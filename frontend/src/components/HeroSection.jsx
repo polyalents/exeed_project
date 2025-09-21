@@ -6,19 +6,22 @@ const HeroSection = () => {
   
   const heroSlides = [
     {
-      image: '/static/images/hero/hero-slide-1.jpg',
+      image: '/static/images/hero/exeedlx.webp',
       title: 'EXEED LX',
-      subtitle: 'Флагманский кроссовер'
+      subtitle: 'Флагманский кроссовер',
+      alt: 'EXEED LX'
     },
     {
       image: '/static/images/hero/hero-slide-2.jpg', 
       title: 'EXEED VX',
-      subtitle: 'Премиальный седан'
+      subtitle: 'Премиальный седан',
+      alt: 'EXEED VX'
     },
     {
       image: '/static/images/hero/hero-slide-3.jpg',
       title: 'EXLANTIX ES',
-      subtitle: 'Электрическое будущее'
+      subtitle: 'Электрическое будущее',
+      alt: 'EXLANTIX ES'
     }
   ];
 
@@ -49,6 +52,8 @@ const HeroSection = () => {
               style={{ 
                 backgroundImage: `linear-gradient(rgba(62,70,81,0.4), rgba(26,26,26,0.6)), url(${slide.image})`
               }}
+              role="img"
+              aria-label={slide.alt}
             />
           </div>
         ))}
@@ -72,14 +77,14 @@ const HeroSection = () => {
 
         {/* Кнопки с анимированными рамками */}
         <div className="hero-buttons">
-          <a href="#test-drive" className="js-button hero-button">
+          <a href="#test-drive" className="js-button top-right hero-button">
             Записаться на тест-драйв
             <span className="border top"></span>
             <span className="border right"></span>
             <span className="border bottom"></span>
             <span className="border left"></span>
           </a>
-          <a href="#models" className="js-button hero-button">
+          <a href="#models" className="js-button bottom-left hero-button">
             Подробнее
             <span className="border top"></span>
             <span className="border right"></span>
@@ -91,11 +96,12 @@ const HeroSection = () => {
 
       {/* Slide Indicators */}
       <div className="slide-indicators">
-        {heroSlides.map((_, index) => (
+        {heroSlides.map((slide, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`indicator ${index === currentSlide ? 'active' : ''}`}
+            aria-label={`Слайд ${index + 1}: ${slide.title}`}
           />
         ))}
       </div>
