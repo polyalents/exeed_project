@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header/Header';
 import HeroSection from '../components/HeroSection';
 import apiService from '../services/api';
+import { useModal } from '../context/ModalContext';
 
 const HomePage = () => {
   const [models, setModels] = useState([]);
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { openModal } = useModal();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,10 +46,14 @@ const HomePage = () => {
           ) : (
             <div className="grid md:grid-cols-3 gap-8">
               {models.map((model) => (
-                <div key={model.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className="h-64 bg-exeed-gray bg-cover bg-center" 
-                       style={{ backgroundImage: `url(${model.image})` }}>
-                  </div>
+                <div 
+                  key={model.id} 
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                >
+                  <div 
+                    className="h-64 bg-exeed-gray bg-cover bg-center" 
+                    style={{ backgroundImage: `url(${model.image})` }} 
+                  />
                   <div className="p-6">
                     <div className="text-sm text-exeed-dark font-semibold mb-2">
                       {model.brand}
@@ -78,7 +84,10 @@ const HomePage = () => {
           <p className="text-xl text-exeed-dark/70 mb-8">
             Почувствуйте мощь и комфорт автомобилей EXEED и EXLANTIX
           </p>
-          <button className="btn-primary text-lg px-8 py-4">
+          <button 
+            onClick={() => openModal('callback')} 
+            className="btn-primary text-lg px-8 py-4"
+          >
             Записаться на тест-драйв
           </button>
         </div>
@@ -114,7 +123,10 @@ const HomePage = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             {dealers.map((dealer) => (
-              <div key={dealer.id} className="bg-exeed-gray/10 rounded-2xl p-8 text-center border border-exeed-gray/30">
+              <div 
+                key={dealer.id} 
+                className="bg-exeed-gray/10 rounded-2xl p-8 text-center border border-exeed-gray/30"
+              >
                 <h3 className="text-2xl font-heading font-bold mb-4 text-exeed-dark">
                   {dealer.name}
                 </h3>

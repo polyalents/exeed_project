@@ -1,26 +1,14 @@
+// src/components/Header/Header.jsx
 import React, { useState } from 'react';
 import MobileMenu from './MobileMenu';
-import CallbackModal from './CallbackModal';
+import { useModal } from '../../context/ModalContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false);
+  const { openModal } = useModal();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  const openCallbackModal = () => {
-    setIsCallbackModalOpen(true);
-  };
-
-  const closeCallbackModal = () => {
-    setIsCallbackModalOpen(false);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <>
@@ -28,7 +16,7 @@ const Header = () => {
         <div className="w-full px-8 sm:px-12 lg:px-16 xl:px-24 py-4 sm:py-5 lg:py-6">
           <div className="flex items-center justify-between w-full">
             
-            {/* Логотип - слева */}
+            {/* Логотип */}
             <div className="flex-shrink-0">
               <img 
                 src="/static/images/logos/logo.webp" 
@@ -37,11 +25,11 @@ const Header = () => {
               />
             </div>
 
-            {/* Мобильная версия - только телефон и гамбургер */}
+            {/* Мобильная версия */}
             <div className="xl:hidden flex items-center space-x-3 sm:space-x-4">
-              {/* Телефон - в мобильной версии открывает форму */}
+              {/* Телефон = открывает модалку */}
               <button 
-                onClick={openCallbackModal}
+                onClick={() => openModal('callback')}
                 className="text-white hover:text-orange-400 transition-colors p-1"
               >
                 <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -49,7 +37,7 @@ const Header = () => {
                 </svg>
               </button>
 
-              {/* Гамбургер меню */}
+              {/* Гамбургер */}
               <button 
                 onClick={toggleMenu}
                 className="text-white p-1 hover:text-orange-400 transition-colors"
@@ -65,9 +53,9 @@ const Header = () => {
               </button>
             </div>
 
-            {/* Десктопная версия - адаптивная информация */}
+            {/* Десктоп */}
             <div className="hidden xl:flex items-center space-x-4 2xl:space-x-6 text-white text-xs 2xl:text-sm">
-              {/* Адреса - горизонтально на больших экранах, вертикально на средних */}
+              {/* Адреса */}
               <div className="flex 2xl:flex-row flex-col 2xl:items-center 2xl:space-x-4 2xl:space-y-0 space-y-1 items-start">
                 <div className="flex items-center space-x-2">
                   <svg className="w-5 h-5 2xl:w-4 2xl:h-4" fill="rgb(138, 138, 138)" viewBox="0 0 24 24">
@@ -84,7 +72,7 @@ const Header = () => {
                 </div>
               </div>
               
-              {/* Телефон - показываем только на экранах 1440px+ */}
+              {/* Телефон */}
               <a 
                 href="tel:+78633203354"
                 className="2xl:flex hidden items-center space-x-2 hover:text-orange-400 transition-colors"
@@ -116,7 +104,7 @@ const Header = () => {
               
               {/* Кнопка обратного звонка */}
               <button
-                onClick={openCallbackModal}
+                onClick={() => openModal('callback')}
                 className="bg-exeed-gray hover:bg-white text-exeed-dark px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105 ml-4"
               >
                 Обратный звонок
@@ -128,12 +116,7 @@ const Header = () => {
         <MobileMenu isOpen={isMenuOpen} onClose={closeMenu} />
       </header>
 
-      <CallbackModal 
-        isOpen={isCallbackModalOpen} 
-        onClose={closeCallbackModal} 
-      />
-
-      {/* Overlay для закрытия меню при клике вне его */}
+      {/* Overlay для меню */}
       {isMenuOpen && (
         <div 
           className="xl:hidden fixed inset-0 z-40 bg-black/50"
