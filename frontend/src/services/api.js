@@ -69,42 +69,42 @@ api.interceptors.response.use(
               name: 'EXEED LX',
               brand: 'EXEED',
               price: 'от 2 690 000 ₽',
-              image: '/static/images/exeedlx.jpg'
+              image: '/static/images/models/exeedlx.webp'
             },
             {
               id: 2,
               name: 'EXEED TXL', 
               brand: 'EXEED',
               price: 'от 3 250 000 ₽',
-              image: '/static/images/exeedtxl.jpg'
+              image: '/static/images/models/exeedtxl.webp'
             },
             {
               id: 3,
               name: 'EXEED RX',
               brand: 'EXEED',
               price: 'от 3 990 000 ₽',
-              image: '/static/images/rx.jpg'
+              image: '/static/images/models/rx.webp'
             },
             {
               id: 4,
               name: 'EXEED VX', 
               brand: 'EXEED',
               price: 'от 4 490 000 ₽',
-              image: '/static/images/vx.jpg'
+              image: '/static/images/models/vx.webp'
             },
             {
               id: 5,
               name: 'EXLANTIX ET',
               brand: 'EXLANTIX', 
               price: 'от 6 600 000 ₽',
-              image: '/static/images/exlantix-et.jpg'
+              image: '/static/images/models/exlantix-et.webp'
             },
             {
               id: 6,
               name: 'EXLANTIX ES',
               brand: 'EXLANTIX', 
               price: 'от 5 990 000 ₽',
-              image: '/static/images/exlantix-es.jpg'
+              image: '/static/images/models/exlantix-es.webp'
             }
           ]
         });

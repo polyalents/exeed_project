@@ -17,10 +17,13 @@ cd frontend
 npm run build
 cd ..
 
-# Копируем собранный фронтенд в nginx папку
+# СНАЧАЛА копируем собранный фронтенд
 sudo cp -r frontend/dist/* /var/www/exeed/
 
-# Копируем шрифты и статические файлы
+# ПОТОМ копируем статические файлы (чтобы не перезаписались)
+sudo cp -r static /var/www/exeed/
+
+# Копируем шрифты
 sudo mkdir -p /var/www/exeed/fonts
 sudo cp -r frontend/public/fonts/* /var/www/exeed/fonts/
 
@@ -32,6 +35,8 @@ fi
 
 # Устанавливаем правильные права доступа
 sudo chown -R www-data:www-data /var/www/exeed/
+sudo find /var/www/exeed/ -type d -exec chmod 755 {} \;
+sudo find /var/www/exeed/ -type f -exec chmod 644 {} \;
 
 echo "All EXEED services started in daemon mode"
 echo "Fonts and static files copied to production"

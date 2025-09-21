@@ -9,7 +9,7 @@ export default defineConfig({
     // Прокси для обхода CORS в разработке
     proxy: {
       '/api': {
-        target: 'http://localhost:5002',  // Используем localhost вместо внешнего IP
+        target: 'http://localhost:5002',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -21,6 +21,17 @@ export default defineConfig({
           });
           proxy.on('proxyRes', (proxyRes, req, res) => {
             console.log('Proxy response:', proxyRes.statusCode, req.url);
+          });
+        },
+      },
+      // Добавляем прокси для статических файлов
+      '/static': {
+        target: 'http://5.129.203.118',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Proxying static file:', req.url);
           });
         },
       }
