@@ -17,6 +17,7 @@ const HomePage = () => {
           apiService.getModels(),
           apiService.getDealers()
         ]);
+        console.log('Loaded models:', modelsRes.data); // для отладки
         setModels(modelsRes.data);
         setDealers(dealersRes.data);
       } catch (error) {
@@ -44,7 +45,7 @@ const HomePage = () => {
           {loading ? (
             <div className="text-center text-exeed-dark">Загрузка моделей...</div>
           ) : (
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {models.map((model) => (
                 <div 
                   key={model.id} 
@@ -52,10 +53,13 @@ const HomePage = () => {
                 >
                   <div 
                     className="h-64 bg-exeed-gray bg-cover bg-center" 
-                    style={{ backgroundImage: `url(${model.image})` }} 
+                    style={{ 
+                      backgroundImage: `url(${model.image})`,
+                      backgroundColor: '#d2d6db' // fallback цвет если изображение не загрузится
+                    }} 
                   />
                   <div className="p-6">
-                    <div className="text-sm text-exeed-dark font-semibold mb-2">
+                    <div className="text-sm text-exeed-dark font-semibold mb-2 uppercase">
                       {model.brand}
                     </div>
                     <h3 className="text-2xl font-heading font-bold mb-2 text-exeed-dark">
@@ -64,7 +68,10 @@ const HomePage = () => {
                     <div className="text-xl font-semibold text-exeed-dark mb-4">
                       {model.price}
                     </div>
-                    <button className="btn-primary w-full">
+                    <button 
+                      onClick={() => openModal('callback')}
+                      className="btn-primary w-full"
+                    >
                       Подробнее
                     </button>
                   </div>
@@ -103,12 +110,22 @@ const HomePage = () => {
             <div className="bg-white rounded-2xl p-8">
               <h3 className="text-2xl font-bold mb-4 text-exeed-dark">Авторассрочка</h3>
               <p className="text-exeed-dark/70 mb-4">От 20 000 ₽ в месяц</p>
-              <button className="btn-secondary">Рассчитать</button>
+              <button 
+                onClick={() => openModal('callback')}
+                className="btn-secondary"
+              >
+                Рассчитать
+              </button>
             </div>
             <div className="bg-white rounded-2xl p-8">
               <h3 className="text-2xl font-bold mb-4 text-exeed-dark">Банковский кредит</h3>
               <p className="text-exeed-dark/70 mb-4">Ставка от 5,9% годовых</p>
-              <button className="btn-secondary">Подать заявку</button>
+              <button 
+                onClick={() => openModal('callback')}
+                className="btn-secondary"
+              >
+                Подать заявку
+              </button>
             </div>
           </div>
         </div>
@@ -132,6 +149,12 @@ const HomePage = () => {
                 </h3>
                 <p className="text-exeed-dark/70 mb-2">{dealer.address}</p>
                 <p className="text-exeed-dark font-semibold">{dealer.phone}</p>
+                <button 
+                  onClick={() => openModal('callback')}
+                  className="btn-primary mt-4"
+                >
+                  Связаться
+                </button>
               </div>
             ))}
           </div>

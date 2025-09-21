@@ -5,3 +5,8 @@
     font-style: normal;
     font-display: swap;
 }
+
+/* Дополнительная проверка для отладки */
+.font-debug {
+    font-family: 'Tactic Sans', 'Nunito Sans', Arial, sans-serif;
+}

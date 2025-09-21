@@ -19,6 +19,19 @@ cd ..
 
 # Копируем собранный фронтенд в nginx папку
 sudo cp -r frontend/dist/* /var/www/exeed/
+
+# Копируем шрифты и статические файлы
+sudo mkdir -p /var/www/exeed/fonts
+sudo cp -r frontend/public/fonts/* /var/www/exeed/fonts/
+
+# Копируем другие статические файлы если есть
+if [ -d "frontend/public/static" ]; then
+    sudo mkdir -p /var/www/exeed/static
+    sudo cp -r frontend/public/static/* /var/www/exeed/static/
+fi
+
+# Устанавливаем правильные права доступа
 sudo chown -R www-data:www-data /var/www/exeed/
 
 echo "All EXEED services started in daemon mode"
+echo "Fonts and static files copied to production"

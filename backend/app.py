@@ -6,45 +6,92 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# Настраиваем CORS для всех доменов в разработке
-CORS(app, origins=['*'])
+
+# Максимально открытая настройка CORS для решения проблемы
+CORS(app, 
+     origins=['*'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['*'],
+     supports_credentials=False,
+     max_age=3600)
+
+# Добавляем CORS заголовки ко всем ответам
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    response.headers['Access-Control-Max-Age'] = '3600'
+    return response
+
+# Обработчик всех OPTIONS запросов (preflight)
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        response = jsonify({'status': 'ok'})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+        response.headers['Access-Control-Max-Age'] = '3600'
+        return response
 
 # Конфигурация
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health_check():
     return jsonify({'status': 'ok', 'message': 'EXEED API is running'})
 
-@app.route('/api/models', methods=['GET'])
+@app.route('/api/models', methods=['GET', 'OPTIONS'])
 def get_models():
-    # Временные данные для тестирования
+    # Полный модельный ряд
     models = [
         {
             'id': 1, 
             'name': 'EXEED LX',
             'brand': 'EXEED',
-            'price': 'от 2 990 000 ₽',
-            'image': '/static/images/models/exeed-lx.jpg'
+            'price': 'от 2 690 000 ₽',
+            'image': '/static/images/exeedlx.jpg'
         },
         {
             'id': 2,
-            'name': 'EXEED VX', 
+            'name': 'EXEED TXL', 
             'brand': 'EXEED',
-            'price': 'от 3 490 000 ₽',
-            'image': '/static/images/models/exeed-vx.jpg'
+            'price': 'от 3 250 000 ₽',
+            'image': '/static/images/exeedtxl.jpg'
         },
         {
             'id': 3,
+            'name': 'EXEED RX',
+            'brand': 'EXEED',
+            'price': 'от 3 990 000 ₽',
+            'image': '/static/images/rx.jpg'
+        },
+        {
+            'id': 4,
+            'name': 'EXEED VX', 
+            'brand': 'EXEED',
+            'price': 'от 4 490 000 ₽',
+            'image': '/static/images/vx.jpg'
+        },
+        {
+            'id': 5,
+            'name': 'EXLANTIX ET',
+            'brand': 'EXLANTIX', 
+            'price': 'от 6 600 000 ₽',
+            'image': '/static/images/exlantix-et.jpg'
+        },
+        {
+            'id': 6,
             'name': 'EXLANTIX ES',
             'brand': 'EXLANTIX', 
-            'price': 'от 4 290 000 ₽',
-            'image': '/static/images/models/exlantix-es.jpg'
+            'price': 'от 5 990 000 ₽',
+            'image': '/static/images/exlantix-es.jpg'
         }
     ]
     return jsonify(models)
 
-@app.route('/api/dealers', methods=['GET'])
+@app.route('/api/dealers', methods=['GET', 'OPTIONS'])
 def get_dealers():
     dealers = [
         {
@@ -62,8 +109,11 @@ def get_dealers():
     ]
     return jsonify(dealers)
 
-@app.route('/api/test-drive', methods=['POST'])
+@app.route('/api/test-drive', methods=['POST', 'OPTIONS'])
 def submit_test_drive():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'})
+        
     try:
         data = request.get_json()
         
@@ -84,8 +134,11 @@ def submit_test_drive():
     except Exception as e:
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
-@app.route('/api/credit', methods=['POST'])
+@app.route('/api/credit', methods=['POST', 'OPTIONS'])
 def submit_credit():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'})
+        
     try:
         data = request.get_json()
         
@@ -106,8 +159,11 @@ def submit_credit():
     except Exception as e:
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
-@app.route('/api/callback', methods=['POST'])
+@app.route('/api/callback', methods=['POST', 'OPTIONS'])
 def submit_callback():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'})
+        
     try:
         data = request.get_json()
         
@@ -147,4 +203,6 @@ def internal_error(error):
     return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
 if __name__ == '__main__':
+    print("Starting EXEED API server...")
+    print("CORS enabled for all origins")
     app.run(debug=True, host='0.0.0.0', port=5002)

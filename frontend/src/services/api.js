@@ -1,17 +1,13 @@
 import axios from 'axios';
 
-// Определяем базовый URL для API в зависимости от окружения
-const getApiBaseUrl = () => {
-  // В продакшене используем полный URL сервера
-  if (import.meta.env.PROD) {
-    return 'http://5.129.203.118:5002/api';
-  }
-  
-  // В разработке можем использовать переменную окружения или локальный адрес
-  return import.meta.env.VITE_API_URL || 'http://localhost:5002/api';
-};
+// Принудительно используем прокси в разработке
+const API_BASE = '/api';
 
-const API_BASE = getApiBaseUrl();
+console.log('🔧 API Configuration:');
+console.log('  - Base URL:', API_BASE);
+console.log('  - Environment:', import.meta.env.MODE);
+console.log('  - Dev mode:', import.meta.env.DEV);
+console.log('  - Prod mode:', import.meta.env.PROD);
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -21,48 +17,101 @@ const api = axios.create({
   }
 });
 
-// Добавляем интерсептор для обработки ошибок
-api.interceptors.response.use(
-  (response) => response,
+// Интерсептор для логирования запросов
+api.interceptors.request.use(
+  (config) => {
+    console.log('🚀 API Request:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      fullUrl: `${config.baseURL}${config.url}`,
+      headers: config.headers
+    });
+    return config;
+  },
   (error) => {
-    console.error('API Error:', error);
+    console.error('❌ Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Интерсептор для обработки ответов и ошибок
+api.interceptors.response.use(
+  (response) => {
+    console.log('✅ API Response:', {
+      status: response.status,
+      url: response.config.url,
+      data: response.data
+    });
+    return response;
+  },
+  (error) => {
+    console.error('❌ API Error:', {
+      message: error.message,
+      code: error.code,
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      fullError: error
+    });
     
     // Если сервер недоступен, возвращаем моковые данные
-    if (error.code === 'ERR_NETWORK' || error.response?.status === 404) {
-      console.warn('API недоступен, используем моковые данные');
+    if (error.code === 'ERR_NETWORK' || !error.response) {
+      console.warn('🔄 Fallback: Используем моковые данные');
       
-      // Возвращаем моковые данные в зависимости от URL
-      const url = error.config.url;
+      const url = error.config?.url || '';
       
-      if (url.includes('/models')) {
+      if (url.includes('models')) {
+        console.log('📦 Returning mock models data');
         return Promise.resolve({
           data: [
             {
               id: 1, 
               name: 'EXEED LX',
               brand: 'EXEED',
-              price: 'от 2 990 000 ₽',
-              image: '/static/images/models/exeed-lx.jpg'
+              price: 'от 2 690 000 ₽',
+              image: '/static/images/exeedlx.jpg'
             },
             {
               id: 2,
-              name: 'EXEED VX', 
+              name: 'EXEED TXL', 
               brand: 'EXEED',
-              price: 'от 3 490 000 ₽',
-              image: '/static/images/models/exeed-vx.jpg'
+              price: 'от 3 250 000 ₽',
+              image: '/static/images/exeedtxl.jpg'
             },
             {
               id: 3,
+              name: 'EXEED RX',
+              brand: 'EXEED',
+              price: 'от 3 990 000 ₽',
+              image: '/static/images/rx.jpg'
+            },
+            {
+              id: 4,
+              name: 'EXEED VX', 
+              brand: 'EXEED',
+              price: 'от 4 490 000 ₽',
+              image: '/static/images/vx.jpg'
+            },
+            {
+              id: 5,
+              name: 'EXLANTIX ET',
+              brand: 'EXLANTIX', 
+              price: 'от 6 600 000 ₽',
+              image: '/static/images/exlantix-et.jpg'
+            },
+            {
+              id: 6,
               name: 'EXLANTIX ES',
               brand: 'EXLANTIX', 
-              price: 'от 4 290 000 ₽',
-              image: '/static/images/models/exlantix-es.jpg'
+              price: 'от 5 990 000 ₽',
+              image: '/static/images/exlantix-es.jpg'
             }
           ]
         });
       }
       
-      if (url.includes('/dealers')) {
+      if (url.includes('dealers')) {
+        console.log('📦 Returning mock dealers data');
         return Promise.resolve({
           data: [
             {
@@ -81,9 +130,17 @@ api.interceptors.response.use(
         });
       }
       
-      if (url.includes('/health')) {
+      if (url.includes('callback')) {
+        console.log('📦 Returning mock callback response');
         return Promise.resolve({
-          data: { status: 'ok', message: 'Mock API is running' }
+          data: { message: 'Заявка успешно отправлена (мок)', id: 1 }
+        });
+      }
+      
+      if (url.includes('health')) {
+        console.log('📦 Returning mock health response');
+        return Promise.resolve({
+          data: { status: 'ok', message: 'Mock API' }
         });
       }
     }
@@ -94,22 +151,40 @@ api.interceptors.response.use(
 
 export const apiService = {
   // Получить информацию о здоровье API
-  getHealth: () => api.get('/health'),
+  getHealth: () => {
+    console.log('🔍 Calling getHealth');
+    return api.get('/health');
+  },
   
   // Получить список моделей
-  getModels: () => api.get('/models'),
+  getModels: () => {
+    console.log('🔍 Calling getModels');
+    return api.get('/models');
+  },
   
   // Получить список дилеров
-  getDealers: () => api.get('/dealers'),
+  getDealers: () => {
+    console.log('🔍 Calling getDealers');
+    return api.get('/dealers');
+  },
   
   // Отправить заявку на тест-драйв
-  submitTestDrive: (data) => api.post('/test-drive', data),
+  submitTestDrive: (data) => {
+    console.log('🔍 Calling submitTestDrive', data);
+    return api.post('/test-drive', data);
+  },
   
   // Отправить заявку на кредит
-  submitCredit: (data) => api.post('/credit', data),
+  submitCredit: (data) => {
+    console.log('🔍 Calling submitCredit', data);
+    return api.post('/credit', data);
+  },
   
   // Отправить заявку на обратный звонок
-  submitCallback: (data) => api.post('/callback', data),
+  submitCallback: (data) => {
+    console.log('🔍 Calling submitCallback', data);
+    return api.post('/callback', data);
+  },
 };
 
 export default apiService;
