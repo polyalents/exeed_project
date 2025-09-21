@@ -14,3 +14,261 @@
 .hero-gradient {
   @apply bg-gradient-to-br from-exeed-dark to-exeed-black;
 }
+
+/* Hero Section Styles */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  padding-top: 80px; /* Компенсируем высоту header */
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: linear-gradient(to right, #0e1214, #1c1f22);
+  color: #fff;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  padding: 4rem 2rem;
+  margin-left: 4rem;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+  color: #d2d6db;
+  opacity: 0.9;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Tactic Sans', 'Nunito Sans', 'Arial', 'sans-serif';
+  letter-spacing: -0.02em;
+}
+
+.hero-benefits {
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-benefits .benefit-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #d2d6db;
+  text-align: center;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.benefits-list li {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  padding: 0.25rem 0;
+}
+
+.benefits-list li strong {
+  color: #d2d6db;
+  font-weight: 700;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Анимированные кнопки */
+.js-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: transparent;
+  color: #fff;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  min-width: 200px;
+  height: 48px;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.js-button:hover {
+  color: #d2d6db;
+}
+
+.js-button .border {
+  position: absolute;
+  background: #fff;
+  transition: transform 0.3s ease;
+}
+
+/* Верх */
+.js-button .border.top {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Право */
+.js-button .border.right {
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+/* Низ */
+.js-button .border.bottom {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+/* Лево */
+.js-button .border.left {
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+/* Активные состояния */
+.js-button.animate .border.top { 
+  transform: scaleX(1); 
+  background: #d2d6db;
+}
+.js-button.animate .border.right { 
+  transform: scaleY(1); 
+  transition-delay: 0.3s; 
+  background: #d2d6db;
+}
+.js-button.animate .border.bottom { 
+  transform: scaleX(1); 
+  transition-delay: 0.6s; 
+  background: #d2d6db;
+}
+.js-button.animate .border.left { 
+  transform: scaleY(1); 
+  transition-delay: 0.9s; 
+  background: #d2d6db;
+}
+
+.slide-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 20;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: #d2d6db;
+  width: 32px;
+  border-radius: 6px;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .hero-content {
+    margin-left: 0;
+    padding: 2rem 1rem;
+    max-width: 100%;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-benefits {
+    padding: 1rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .js-button {
+    min-width: 100%;
+    height: 44px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .benefits-list li {
+    font-size: 0.9rem;
+  }
+  
+  .hero-benefits .benefit-title {
+    font-size: 1rem;
+  }
+}
