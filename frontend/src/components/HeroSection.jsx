@@ -109,7 +109,13 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="hero-content">
-        <p className="hero-subtitle">Официальные дилеры в Ростовской области</p>
+        <h3 className="inline-block mb-4 px-6 py-2 text-white text-sm sm:text-base md:text-lg font-semibold uppercase tracking-wide 
+          rounded-md shadow-md
+          bg-gradient-to-r from-orange-600/90 via-orange-500/80 to-orange-300/70 backdrop-blur-sm">
+          Официальные дилеры в Ростовской области
+        </h3>
+
+
         <h1 className="hero-title">{heroSlides[currentSlide].alt}</h1>
         <p className="hero-description">{heroSlides[currentSlide].subtitle}</p>
 
@@ -131,19 +137,9 @@ const HeroSection = () => {
         <div className="hero-buttons">
           <button
             onClick={() => openModal('callback')}
-            className="js-button top-right hero-button"
+            className="js-button top-right hero-button mx-auto"
           >
             Записаться на тест-драйв
-            <span className="border top"></span>
-            <span className="border right"></span>
-            <span className="border bottom"></span>
-            <span className="border left"></span>
-          </button>
-          <button
-            onClick={() => openModal('callback')}
-            className="js-button bottom-left hero-button"
-          >
-            Подробнее
             <span className="border top"></span>
             <span className="border right"></span>
             <span className="border bottom"></span>

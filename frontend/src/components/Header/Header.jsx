@@ -16,72 +16,50 @@ const Header = () => {
         <div className="w-full px-8 sm:px-12 lg:px-16 xl:px-24 py-4 sm:py-5 lg:py-6">
           <div className="flex items-center w-full">
             
-            {/* Лого + меню вместе */}
-            <div className="flex items-center">
-              {/* Логотип */}
-              <div className="flex-shrink-0">
-                <img 
-                  src="/static/images/logos/logo.webp" 
-                  alt="EXEED & EXLANTIX" 
-                  className="h-2.5 sm:h-2.5 lg:h-3 w-auto object-contain" 
-                />
+            {/* Лого */}
+            <div className="flex-shrink-0">
+              <img 
+                src="/static/images/logos/logo.webp" 
+                alt="EXEED & EXLANTIX" 
+                className="h-2.5 sm:h-2.5 lg:h-3 w-auto object-contain" 
+              />
+            </div>
+
+            {/* Десктоп-меню (в одну линию) */}
+            <nav className="hidden xl:flex flex-row items-center space-x-6 ml-10">
+              {/* Выпадающее меню EXEED */}
+              <div className="relative group">
+                <a href="#" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
+                  МОДЕЛИ EXEED
+                </a>
+                <div className="absolute left-0 mt-2 hidden group-hover:flex flex-col bg-exeed-dark/95 backdrop-blur-sm rounded-lg shadow-lg p-3 min-w-[180px] z-50">
+                  <a href="#exeed-lx" className="px-3 py-2 text-white hover:text-orange-400">EXEED LX</a>
+                  <a href="#exeed-txl" className="px-3 py-2 text-white hover:text-orange-400">EXEED TXL</a>
+                  <a href="#exeed-rx" className="px-3 py-2 text-white hover:text-orange-400">EXEED RX</a>
+                  <a href="#exeed-vx" className="px-3 py-2 text-white hover:text-orange-400">EXEED VX</a>
+                </div>
               </div>
 
-              {/* Десктоп-меню (рядом с логотипом) */}
-              <nav className="hidden xl:flex flex-col items-start space-y-2 ml-10">
-                {/* Первая строка */}
-                <div className="flex items-center space-x-4 2xl:space-x-6">
-                  
-                  {/* Выпадающее меню EXEED */}
-                  <div className="relative group">
-                    <a href="#" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                      МОДЕЛИ EXEED
-                    </a>
-                    <div className="absolute left-0 mt-2 hidden group-hover:flex flex-col bg-exeed-dark/95 backdrop-blur-sm rounded-lg shadow-lg p-3 min-w-[180px] z-50">
-                      <a href="#exeed-lx" className="px-3 py-2 text-white hover:text-orange-400">EXEED LX</a>
-                      <a href="#exeed-txl" className="px-3 py-2 text-white hover:text-orange-400">EXEED TXL</a>
-                      <a href="#exeed-rx" className="px-3 py-2 text-white hover:text-orange-400">EXEED RX</a>
-                      <a href="#exeed-vx" className="px-3 py-2 text-white hover:text-orange-400">EXEED VX</a>
-                    </div>
-                  </div>
-
-                  {/* Выпадающее меню EXLANTIX */}
-                  <div className="relative group">
-                    <a href="#" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                      МОДЕЛИ EXLANTIX
-                    </a>
-                    <div className="absolute left-0 mt-2 hidden group-hover:flex flex-col bg-exeed-dark/95 backdrop-blur-sm rounded-lg shadow-lg p-3 min-w-[180px] z-50">
-                      <a href="#exlantix-es" className="px-3 py-2 text-white hover:text-orange-400">EXLANTIX ES</a>
-                      <a href="#exlantix-et" className="px-3 py-2 text-white hover:text-orange-400">EXLANTIX ET</a>
-                    </div>
-                  </div>
-
-                  <a href="#test-drive" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                    ТЕСТ-ДРАЙВ
-                  </a>
-                  <a href="#trade-in" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                    TRADE-IN
-                  </a>
+              {/* Выпадающее меню EXLANTIX */}
+              <div className="relative group">
+                <a href="#" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
+                  МОДЕЛИ EXLANTIX
+                </a>
+                <div className="absolute left-0 mt-2 hidden group-hover:flex flex-col bg-exeed-dark/95 backdrop-blur-sm rounded-lg shadow-lg p-3 min-w-[180px] z-50">
+                  <a href="#exlantix-es" className="px-3 py-2 text-white hover:text-orange-400">EXLANTIX ES</a>
+                  <a href="#exlantix-et" className="px-3 py-2 text-white hover:text-orange-400">EXLANTIX ET</a>
                 </div>
+              </div>
 
-                {/* Вторая строка */}
-                <div className="flex items-center space-x-4 2xl:space-x-6">
-                  <a href="#credit" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                    КРЕДИТ
-                  </a>
-                  <a href="#dealers" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                    ДИЛЕРЫ
-                  </a>
-                  <a href="#about" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">
-                    О НАС
-                  </a>
-                </div>
-              </nav>
-            </div>
+              {/* Простые ссылки */}
+              <a href="#test-drive" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">ТЕСТ-ДРАЙВ</a>
+              <a href="#trade-in" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">TRADE-IN</a>
+              <a href="#credit" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">КРЕДИТ</a>
+              <a href="#dealers" className="text-white text-sm hover:text-orange-400 transition-colors font-medium">ДИЛЕРЫ</a>
+            </nav>
 
             {/* Контакты справа */}
             <div className="hidden xl:flex items-center space-x-6 ml-auto">
-              {/* Адреса */}
               <div className="flex flex-col space-y-1 items-start text-xs 2xl:text-sm">
                 <div className="flex items-center space-x-2">
                   <svg className="w-4 h-4" fill="rgb(138, 138, 138)" viewBox="0 0 24 24">
@@ -97,7 +75,6 @@ const Header = () => {
                 </div>
               </div>
 
-              {/* Телефон */}
               <a 
                 href="tel:+78633203354"
                 className="flex items-center space-x-2 hover:text-orange-400 transition-colors text-xs 2xl:text-sm"
@@ -108,7 +85,6 @@ const Header = () => {
                 <span className="font-semibold text-white">+7 863 320-33-54</span>
               </a>
 
-              {/* Кнопка */}
               <button
                 onClick={() => openModal('callback')}
                 className="bg-exeed-gray hover:bg-white text-exeed-dark px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105"
@@ -117,9 +93,8 @@ const Header = () => {
               </button>
             </div>
 
-            {/* Мобильное меню справа */}
+            {/* Мобильное меню */}
             <div className="xl:hidden flex items-center space-x-3 sm:space-x-4 ml-auto">
-              {/* Телефон */}
               <button 
                 onClick={() => openModal('callback')}
                 className="text-white hover:text-orange-400 transition-colors p-1"
@@ -129,7 +104,6 @@ const Header = () => {
                 </svg>
               </button>
 
-              {/* Гамбургер */}
               <button 
                 onClick={toggleMenu}
                 className="text-white p-1 hover:text-orange-400 transition-colors"
