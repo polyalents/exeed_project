@@ -15,10 +15,11 @@
   @apply bg-gradient-to-br from-exeed-dark to-exeed-black;
 }
 
-/* Hero Section Styles */
+/* Hero Section Styles - ОБНОВЛЕННАЯ ВЕРСИЯ С ФИКСИРОВАННОЙ ШИРИНОЙ */
 .hero-section {
   position: relative;
-  min-height: 90vh;
+  min-height: 100vh;
+  width: 100vw; /* Фиксированная ширина на весь экран */
   overflow: hidden;
   padding-top: 80px;
   display: flex;
@@ -30,13 +31,16 @@
 
 .hero-content {
   position: relative;
-  z-index: 10;
+  z-index: 20; /* Увеличили z-index для контента */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 500px; /* Минимальная ширина для предотвращения прыжков */
   max-width: 600px;
+  width: 100%;
   padding: 4rem 2rem;
   margin-left: 4rem;
+  flex-shrink: 0; /* Не сжимается */
 }
 
 .hero-subtitle {
@@ -45,6 +49,9 @@
   margin: 0;
   color: #d2d6db;
   opacity: 0.9;
+  height: 2rem; /* Фиксированная высота */
+  display: flex;
+  align-items: center;
 }
 
 .hero-title {
@@ -53,15 +60,32 @@
   margin: 0;
   font-family: 'Tactic Sans', 'Nunito Sans', 'Arial', 'sans-serif';
   letter-spacing: -0.02em;
+  line-height: 1.1;
+  min-height: 120px; /* Фиксированная высота для заголовка */
+  display: flex;
+  align-items: center;
+}
+
+/* Новый класс для описания с фиксированной высотой */
+.hero-description {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #d2d6db;
+  opacity: 0.8;
+  height: 2rem; /* Фиксированная высота */
+  display: flex;
+  align-items: center;
+  margin: 0;
 }
 
 .hero-benefits {
   margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: #00000075;
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 140px; /* Фиксированная минимальная высота */
 }
 
 .hero-benefits .benefit-title {
@@ -70,10 +94,13 @@
   margin-bottom: 0.75rem;
   color: #d2d6db;
   text-align: center;
+  height: 1.5rem; /* Фиксированная высота */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .benefits-list {
-  list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
@@ -86,6 +113,9 @@
   font-weight: 400;
   color: #fff;
   padding: 0.25rem 0;
+  height: 1.8rem; /* Фиксированная высота строки */
+  display: flex;
+  align-items: center;
 }
 
 .benefits-list li strong {
@@ -98,9 +128,11 @@
   gap: 1rem;
   margin-top: 1.5rem;
   flex-wrap: wrap;
+  min-height: 60px; /* Фиксированная высота для блока кнопок */
+  align-items: center;
 }
 
-/* Анимированные кнопки */
+/* Анимированные кнопки - ОБНОВЛЕННАЯ ВЕРСИЯ */
 .js-button {
   position: relative;
   display: inline-flex;
@@ -109,17 +141,18 @@
   padding: 12px 24px;
   background: transparent;
   color: #fff;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
   text-decoration: none;
   border: none;
   cursor: pointer;
   overflow: hidden;
-  min-width: 200px;
-  height: 48px;
-  font-size: 0.9rem;
+  width: 200px; /* ФИКСИРОВАННАЯ ШИРИНА */
+  height: 48px; /* ФИКСИРОВАННАЯ ВЫСОТА */
+  font-size: 0.8rem;
   letter-spacing: 0.5px;
   transition: color 0.4s ease;
+  flex-shrink: 0; /* Не сжимается */
 }
 
 .js-button:hover {
@@ -204,6 +237,7 @@
   transition-delay: 0.1s;
 }
 
+/* Индикаторы слайдов */
 .slide-indicators {
   position: absolute;
   bottom: 2rem;
@@ -211,7 +245,7 @@
   transform: translateX(-50%);
   display: flex;
   gap: 0.75rem;
-  z-index: 20;
+  z-index: 30; /* Увеличили z-index */
 }
 
 .indicator {
@@ -237,44 +271,73 @@
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
   .hero-section {
-    min-height: 80vh;
+    min-height: 100vh;
+    width: 100vw; /* Сохраняем полную ширину на мобилке */
     display: flex;
-    justify-content: flex-start; /* вместо center */
-    align-items: flex-start;     /* тянем вверх */
+    justify-content: flex-start;
+    align-items: flex-start;
     text-align: center;
-    padding: 6rem 1rem 2rem;     /* сверху больше паддинга */
+    padding: 6rem 1rem 2rem;
   }
 
   .hero-content {
-    margin: 0 auto;              /* центрируем весь блок */
+    margin: 0 auto;
     padding: 2rem 1rem;
+    min-width: unset; /* Убираем минимальную ширину на мобилке */
     max-width: 90%;
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;         /* контент по центру */
+    align-items: center;
     text-align: center;
     gap: 1.2rem;
+  }
+
+  .hero-title {
+    min-height: 80px; /* Уменьшаем высоту на мобилке */
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    height: 1.5rem;
+  }
+  
+  .hero-description {
+    height: 1.5rem;
+    font-size: 1rem;
   }
 
   .hero-benefits {
     width: 100%;
     text-align: center;
     padding: 1rem;
+    min-height: 120px;
+  }
+
+  .hero-benefits .benefit-title {
+    font-size: 1rem;
+  }
+
+  .benefits-list li {
+    font-size: 0.9rem;
+    height: 1.6rem;
   }
 
   .hero-buttons {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;         /* кнопки по центру */
+    align-items: center;
     gap: 1rem;
     margin-top: 1.5rem;
+    min-height: 120px; /* Фиксированная высота для мобильных кнопок */
   }
 
   .js-button {
     width: 100%;
-    max-width: 280px;            /* фиксируем ширину кнопок */
+    max-width: 280px;
+    height: 48px; /* Сохраняем фиксированную высоту */
     text-align: center;
   }
 
@@ -324,18 +387,29 @@
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    min-height: 70px;
   }
   
   .hero-subtitle {
-    font-size: 1rem;
-  }
-  
-  .benefits-list li {
     font-size: 0.9rem;
   }
   
+  .hero-description {
+    font-size: 0.9rem;
+  }
+  
+  .benefits-list li {
+    font-size: 0.85rem;
+    height: 1.5rem;
+  }
+  
   .hero-benefits .benefit-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .hero-benefits {
+    min-height: 110px;
+    padding: 0.8rem;
   }
 }

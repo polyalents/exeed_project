@@ -115,15 +115,15 @@ const HeroSection = () => {
 
         <div className="hero-benefits">
           <p className="benefit-title">Рекордные выгоды до 30.09</p>
-          <ul className="benefits-list">
-            <li>
-              <strong>1 475 000 ₽</strong> выгода на EXEED
+          <ul className="benefits-list space-y-2">
+            <li className="before:content-['-'] before:mr-2 before:text-white">
+              <strong className="mr-1">1 475 000 ₽</strong> выгода на EXEED
             </li>
-            <li>
-              <strong>от 20 000 ₽/мес</strong> авторассрочка
+            <li className="before:content-['-'] before:mr-2 before:text-white">
+              <strong className="mr-1">Авторассрочка</strong> от 20 000 ₽/месяц
             </li>
-            <li>
-              <strong>В подарок</strong> доп.оборудование
+            <li className="before:content-['-'] before:mr-2 before:text-white">
+              <strong className="mr-1">Доп. оборудование</strong> в подарок!
             </li>
           </ul>
         </div>
