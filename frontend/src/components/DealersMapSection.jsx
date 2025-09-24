@@ -97,47 +97,41 @@ const DealersMapSection = ({ dealers = [] }) => {
           </div>
         </div>
         
-        {/* МОБИЛЬНЫЙ СЛАЙДЕР ВНИЗУ */}
-        <div className="lg:hidden mt-6">
-          <div className="overflow-x-auto pb-4">
-            <div className="flex gap-4 px-4" style={{ width: 'max-content' }}>
-              {dealers.map((dealer) => (
-                <div 
-                  key={`mobile-${dealer.id}`}
-                  className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 w-64 h-56 flex flex-col cursor-pointer transition-all duration-300 hover:shadow-xl ${
-                    selectedDealer?.id === dealer.id ? 'ring-2 ring-exeed-dark' : ''
-                  }`}
-                  onClick={() => handleDealerSelect(dealer)}
-                >
-                  <h3 className="text-xl font-heading font-bold mb-3 text-black leading-tight">
-                    {dealer.name}
-                  </h3>
-                  
-                  <div className="flex-grow mb-4">
-                    <div className="flex items-start space-x-2">
-                      <svg className="w-4 h-4 text-gray-500 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                      </svg>
-                      <p className="text-sm text-gray-600 leading-snug">
-                        Ростов-на-Дону,<br />{dealer.address.split(', ').slice(1).join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openModal('callback');
-                      }}
-                      className="w-full bg-exeed-dark hover:bg-exeed-black text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors"
-                    >
-                      Связаться
-                    </button>
+        {/* МОБИЛЬНЫЙ СПИСОК ДИЛЕРОВ */}
+        <div className="lg:hidden mt-6 px-4">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+            {dealers.map((dealer) => (
+              <div 
+                key={`mobile-${dealer.id}`}
+                className={`bg-white rounded-xl p-6 shadow-md border border-gray-200 flex flex-col transition-all duration-300 hover:shadow-lg ${
+                  selectedDealer?.id === dealer.id ? 'ring-2 ring-exeed-dark' : ''
+                }`}
+                onClick={() => handleDealerSelect(dealer)}
+              >
+                <h3 className="text-lg font-heading font-bold mb-2 text-black leading-tight">
+                  {dealer.name}
+                </h3>
+                <div className="flex-grow mb-3">
+                  <div className="flex items-start space-x-2">
+                    <svg className="w-4 h-4 text-gray-500 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    <p className="text-sm text-gray-600 leading-snug">
+                      Ростов-на-Дону,<br />{dealer.address.split(', ').slice(1).join(', ')}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openModal('callback');
+                  }}
+                  className="w-full bg-exeed-dark hover:bg-exeed-black text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Связаться
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
