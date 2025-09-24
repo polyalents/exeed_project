@@ -112,7 +112,7 @@ const HeroSection = () => {
         <h3 className="inline-block mb-4 px-6 py-2 text-white text-sm sm:text-base md:text-lg font-semibold uppercase tracking-wide 
           rounded-md shadow-md
           bg-gradient-to-r from-orange-600/90 via-orange-500/80 to-orange-300/70 backdrop-blur-sm">
-          Официальные дилеры в Ростовской области
+          Официальные дилеры EXEED & EXLANTIX в Ростовской области
         </h3>
 
 

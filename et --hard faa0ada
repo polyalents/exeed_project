@@ -1,0 +1,18 @@
+* [33m8aa0579[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m fix:homepage
+* [33mfaa0ada[m fix:homepage
+* [33md726966[m fix:menu
+* [33m28a958d[m fix:hero-section
+* [33m16b1e70[m Revert "fix: layout adjustments"
+* [33me388b9e[m trigger reindex
+* [33m5d77d32[m fix: layout adjustments
+* [33mda3c5a7[m fix:map
+* [33m3513f5a[m fix:models
+* [33mdafbf19[m fix:api
+* [33m80fe7c9[m fix:font
+* [33m4f3957a[m fix: api
+* [33me994462[m fix: hero-section
+* [33m7500bc6[m fix: button
+* [33m751ccbf[m fix: header
+* [33mcc20197[m fix: add frontend
+* [33mdf44cf1[m fix: add frontend as regular folder instead of submodule
+* [33m7f7dcde[m init: import full project
