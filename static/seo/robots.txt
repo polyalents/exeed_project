@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /api/
+
+Sitemap: http://5.129.203.118/sitemap.xml

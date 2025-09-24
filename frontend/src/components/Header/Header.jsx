@@ -38,8 +38,11 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Плавная прокрутка к элементу
+  // Плавная прокрутка к элементу + обновление URL
   const scrollToSection = (sectionId) => {
+    // Обновляем URL с хэшем
+    window.history.pushState(null, null, `#${sectionId}`);
+    
     const element = document.getElementById(sectionId);
     if (element) {
       const headerHeight = 80;
@@ -149,10 +152,11 @@ const Header = () => {
             {/* Лого */}
             <div className="flex-shrink-0">
               <a 
-                href="#hero-section"
+                href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  scrollToSection('hero-section');
+                  window.history.pushState(null, null, window.location.pathname);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               >
                 <img 
