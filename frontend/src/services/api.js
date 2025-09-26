@@ -116,13 +116,13 @@ api.interceptors.response.use(
           data: [
             {
               id: 1,
-              name: 'Дилер PRIDE',
+              name: 'Дилер ПРАЙД',
               address: 'Ростов-на-Дону, ул. Малиновского, 43',
               phone: '+7 (863) 320-33-55'
             },
             {
               id: 2,
-              name: 'Дилер SOKOL-MOTORS',
+              name: 'Дилер СОКОЛ-МОТОРС',
               address: 'Ростов-на-Дону, ул. Пойменная, 1г',
               phone: '+7 (863) 320-33-54'
             }

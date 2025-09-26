@@ -1,15 +1,7 @@
 // src/components/MobileMenu.jsx
 import React from 'react';
-import { useModal } from '../../context/ModalContext';
 
 const MobileMenu = ({ isOpen, onClose }) => {
-  const { openModal } = useModal();
-
-  const handleLinkClick = (callback) => {
-    if (callback) callback(); // если передали действие — выполняем
-    onClose(); // потом закрываем меню
-  };
-
   return (
     <div
       className={`xl:hidden transition-all duration-300 ease-in-out ${
@@ -17,61 +9,65 @@ const MobileMenu = ({ isOpen, onClose }) => {
       } overflow-hidden bg-exeed-header border-t border-gray-600`}
     >
       <nav className="px-8 sm:px-12 py-6 space-y-1 text-center">
-        {/* EXEED */}
+
+        {/* МОДЕЛИ EXEED */}
         <a
-          href="#models"
+          href="#exeed-models"
           onClick={onClose}
           className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
-          EXEED
+          МОДЕЛИ EXEED
         </a>
-        <div className="flex items-center justify-center py-2">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+        <div className="flex items-center justify-center">
+          <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
-        {/* EXLANTIX */}
+        {/* МОДЕЛИ EXLANTIX */}
         <a
-          href="#models"
+          href="#exlantix-models"
           onClick={onClose}
           className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
-          EXLANTIX
+          МОДЕЛИ EXLANTIX
         </a>
-        <div className="flex items-center justify-center py-2">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+        <div className="flex items-center justify-center">
+          <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
-        {/* ТЕСТ-ДРАЙВ → открывает модалку */}
-        <button
-          onClick={() => handleLinkClick(() => openModal('callback'))}
-          className="w-full block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        {/* ТЕСТ-ДРАЙВ */}
+        <a
+          href="#test-drive"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           ТЕСТ-ДРАЙВ
-        </button>
-        <div className="flex items-center justify-center py-2">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+        </a>
+        <div className="flex items-center justify-center">
+          <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+        </div>
+
+        {/* КРЕДИТ */}
+        <a
+          href="#credit"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        >
+          КРЕДИТ
+        </a>
+        <div className="flex items-center justify-center">
+          <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* TRADE-IN */}
-        <button
-          onClick={() => handleLinkClick(() => openModal('callback'))}
-          className="w-full block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#trade-in"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           TRADE-IN
-        </button>
-        <div className="flex items-center justify-center py-2">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
-        </div>
-
-        {/* КРЕДИТ → тоже модалка */}
-        <button
-          onClick={() => handleLinkClick(() => openModal('callback'))}
-          className="w-full block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
-        >
-          КРЕДИТ
-        </button>
-        <div className="flex items-center justify-center py-2">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+        </a>
+        <div className="flex items-center justify-center">
+          <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* ДИЛЕРЫ */}
@@ -84,12 +80,13 @@ const MobileMenu = ({ isOpen, onClose }) => {
         </a>
 
         {/* Контакты */}
-        <div className="pt-6 mt-6 border-t border-gray-600 space-y-4">
-          <div className="space-y-3 text-sm text-gray-300">
+        <div className="pt-8 mt-6 border-t border-gray-600 space-y-4 text-gray-300 text-sm">
+          {/* Адреса */}
+          <div className="space-y-3">
             <div className="flex items-center justify-center space-x-2">
               <svg
                 className="w-4 h-4 flex-shrink-0"
-                fill="rgb(138, 138, 138)"
+                fill="rgb(180,180,180)"
                 viewBox="0 0 24 24"
               >
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -99,7 +96,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-center space-x-2">
               <svg
                 className="w-4 h-4 flex-shrink-0"
-                fill="rgb(138, 138, 138)"
+                fill="rgb(180,180,180)"
                 viewBox="0 0 24 24"
               >
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -109,7 +106,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
           </div>
 
           {/* Телефон */}
-          <div className="pt-2">
+          <div className="pt-2 text-center">
             <a
               href="tel:+78633203354"
               className="inline-flex items-center space-x-2 text-white hover:text-orange-400 transition-colors"

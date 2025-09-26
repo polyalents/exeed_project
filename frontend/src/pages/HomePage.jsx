@@ -5,11 +5,27 @@ import DealersMapSection from '../components/DealersMapSection';
 import apiService from '../services/api';
 import { useModal } from '../context/ModalContext';
 
-const HomePage = () => {
+const HomePage = ({ scrollTo }) => {
   const [models, setModels] = useState([]);
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { openModal } = useModal();
+
+  // ВСТАВИТЬ ЭТОТ БЛОК ЗДЕСЬ:
+  useEffect(() => {
+    if (scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(scrollTo);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [scrollTo]);
 
   useEffect(() => {
     const fetchData = async () => {
