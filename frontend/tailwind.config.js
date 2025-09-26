@@ -30,11 +30,14 @@ module.exports = {
       },
       height: {
         'model-mobile': '400px',
-        'model-desktop': '800px',
-        'model-card': '400px',
-        'model-card-lg': '800px',
+        'model-desktop': '600px', // ИЗМЕНИЛИ с 800px на 600px
+        'model-card': '600px',     // ИЗМЕНИЛИ с 400px на 600px
+        'model-card-lg': '600px',  // ИЗМЕНИЛИ с 800px на 600px
+        // Добавили новые классы для homepage
+        'homepage-model': '600px',
+        'homepage-model-mobile': '400px',
       },
-      // ИСПРАВЛЕННЫЕ брейкпоинты - НЕ переопределяем стандартные!
+      // Брейкпоинты - НЕ переопределяем стандартные!
       screens: {
         'tablet-vert': '810px', // Только добавляем новые
         'desktop-sm': '1460px',

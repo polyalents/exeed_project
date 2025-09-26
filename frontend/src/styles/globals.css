@@ -1,3 +1,5 @@
+/* ДОБАВИТЬ В frontend/src/styles/globals.css */
+
 /* Глобальные стили */
 * {
   margin: 0;
@@ -14,18 +16,84 @@ body {
   font-family: 'Nunito Sans', 'Nunito-Sans', Arial, sans-serif;
   line-height: 1.6;
   color: #111827;
+  /* ВАЖНО: убираем overflow-x: hidden если есть */
 }
 
 @layer components {
+  /* ИСПРАВЛЕННЫЕ стили для изображений моделей */
   .model-image {
-    @apply w-full h-[400px] lg:h-[600px] object-cover object-center;
+    @apply w-full h-[600px] object-cover object-center;
   }
   
   .model-container {
-    @apply w-full grid grid-cols-1 lg:grid-cols-2 h-[400px] lg:h-[600px];
+    @apply w-full grid grid-cols-1 lg:grid-cols-2 h-[600px];
   }
   
   .model-image-wrapper {
-    @apply relative overflow-hidden;
+    @apply relative overflow-hidden h-[600px];
   }
+
+  /* КЛЮЧЕВЫЕ ИСПРАВЛЕНИЯ для homepage */
+  .homepage-model-card {
+    @apply grid grid-cols-1 lg:grid-cols-2 items-stretch;
+    min-height: 600px;
+    width: 100vw; /* ПОЛНАЯ ШИРИНА ЭКРАНА */
+    margin-left: calc(-50vw + 50%); /* ЦЕНТРИРУЕМ ОТНОСИТЕЛЬНО ЭКРАНА */
+    margin-right: calc(-50vw + 50%);
+  }
+
+  .homepage-model-image {
+    @apply w-full h-[600px] object-cover object-center;
+    /* Убираем все отступы */
+    margin: 0;
+    padding: 0;
+  }
+
+  .homepage-model-image-container {
+    @apply relative overflow-hidden;
+    width: 100%; /* Точно 100% от родителя */
+    height: 600px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .homepage-model-content {
+    @apply min-h-[600px] flex flex-col justify-center px-6 py-8 lg:px-12 lg:py-16;
+    width: 100%; /* Заполняем всю ширину */
+  }
+
+  /* Для мобильных устройств */
+  @media (max-width: 1023px) {
+    .homepage-model-card {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+      min-height: auto;
+    }
+
+    .homepage-model-image {
+      @apply h-[400px];
+    }
+
+    .homepage-model-image-container {
+      height: 400px;
+    }
+
+    .homepage-model-content {
+      @apply min-h-[400px] px-4 py-6;
+    }
+  }
+}
+
+/* ДОПОЛНИТЕЛЬНЫЕ ИСПРАВЛЕНИЯ для родительских контейнеров */
+.models-section {
+  width: 100%;
+  overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
+}
+
+.models-container {
+  width: 100%;
+  max-width: none; /* Убираем ограничения ширины */
+  padding: 0; /* Убираем отступы */
+  margin: 0;
 }

@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 3001,
     host: true,
-    // Прокси для обхода CORS в разработке
     proxy: {
       '/api': {
         target: 'http://localhost:5002',
@@ -24,18 +24,19 @@ export default defineConfig({
           });
         },
       },
-      // Добавляем прокси для статических файлов
-      '/static': {
-        target: 'http://5.129.203.118',
-        changeOrigin: true,
-        secure: false,
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Proxying static file:', req.url);
-          });
-        },
-      }
-    }
+    },
+    fs: {
+      // Разрешаем доступ к локальной папке static
+      allow: ['..', './static'],
+    },
   },
-  assetsInclude: ['**/*.otf', '**/*.ttf', '**/*.woff', '**/*.woff2']
+
+  // Алиасы, чтобы можно было писать /static/... прямо в коде
+  resolve: {
+    alias: {
+      '/static': path.resolve(__dirname, './static'),
+    },
+  },
+
+  assetsInclude: ['**/*.otf', '**/*.ttf', '**/*.woff', '**/*.woff2'],
 })
