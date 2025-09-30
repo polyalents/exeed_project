@@ -11,7 +11,6 @@ const HomePage = ({ scrollTo }) => {
   const [loading, setLoading] = useState(true);
   const { openModal } = useModal();
 
-  // ВСТАВИТЬ ЭТОТ БЛОК ЗДЕСЬ:
   useEffect(() => {
     if (scrollTo) {
       const timer = setTimeout(() => {
@@ -47,17 +46,9 @@ const HomePage = ({ scrollTo }) => {
     fetchData();
   }, []);
 
-  // Разделяем модели по брендам
   const exeedModels = models.filter(model => model.brand === 'EXEED');
   const exlantixModels = models.filter(model => model.brand === 'EXLANTIX');
 
-  // Компонент карточки модели - ИСПРАВЛЕННАЯ АДАПТИВНОСТЬ
-// Компонент карточки модели с ФИКСИРОВАННОЙ ВЫСОТОЙ 600px
-// КОМПОНЕНТ для overlay характеристик
-// КОМПОНЕНТ для overlay характеристик (адаптивный, с шестерёнкой и каплей для EXLANTIX)
-// Современный адаптивный оверлей характеристик модели
-// Современный адаптивный оверлей характеристик модели (обновлённая шестерёнка)
-// Современный адаптивный оверлей характеристик модели (финальная версия)
 const ModelSpecsOverlay = ({ model }) => {
   const getModelSpecs = (modelName) => {
     switch (modelName) {
@@ -81,7 +72,6 @@ const ModelSpecsOverlay = ({ model }) => {
   const specs = getModelSpecs(model.name);
   const isExlantix = model.name?.startsWith('EXLANTIX');
 
-  // Иконки (встроенные SVG)
   const icons = {
     power: (
       <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
@@ -109,7 +99,6 @@ const ModelSpecsOverlay = ({ model }) => {
       </svg>
     ),
     torque: (
-      // ТВОЙ SVG — ровная красивая шестерёнка
     <svg
       viewBox="0 0 24 24"
       className="w-7 h-7 text-orange-400"
@@ -441,7 +430,7 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       </section>
 
       {/* EXLANTIX Models Section */}
-      <section id="exlantix-models" className="py-12 lg:py-20 bg-gray-50">
+      <section id="exlantix-models" className="pt-12 lg:pt-20 pb-0 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Заголовок секции */}
           <div className="text-center mb-12 lg:mb-16">
