@@ -1,6 +1,6 @@
 // src/components/Header/Header.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MobileMenu from './MobileMenu';
 import { useModal } from '../../context/ModalContext';
 
@@ -10,7 +10,6 @@ const Header = () => {
   const [screenSize, setScreenSize] = useState('desktop');
   const { openModal } = useModal();
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Отслеживание размера экрана для адаптации
   useEffect(() => {
@@ -42,75 +41,14 @@ const Header = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Эффект для скролла при изменении URL
-  useEffect(() => {
-    const pathname = location.pathname.replace('/', '');
-    
-    // Список секций, которые находятся на главной странице
-    const homePageSections = ['exeed-models', 'exlantix-models'];
-    
-    if (pathname && homePageSections.includes(pathname)) {
-      // Если это секция на главной странице - скроллим к ней
-      setTimeout(() => {
-        const element = document.getElementById(pathname);
-        if (element) {
-          const headerHeight = 80;
-          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - headerHeight;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    } else if (pathname === '') {
-      // Если путь пустой - скроллим наверх
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [location.pathname]);
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Функция навигации с плавным скроллом
+  // Функция навигации - только меняет маршрут, без скролла
   const handleNavigation = (path) => {
-    const section = path.replace("/", "");
-
-    // 🔹 все секции на главной странице
-    const homeSections = [
-      "exeed-models", "exlantix-models", "exeed-lx", "exeed-txl",
-      "exeed-rx", "exeed-vx", "exlantix-et", "exlantix-es",
-      "credit", "test-drive", "trade-in", "dealers"
-    ];
-
-    const onHomePage = location.pathname === "/";
-
-    // Если мы не на главной странице — возвращаемся туда и ждём рендер
-    if (!onHomePage && homeSections.includes(section)) {
-      navigate("/"); 
-      setTimeout(() => {
-        const el = document.getElementById(section);
-        if (el) {
-          const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
-          window.scrollTo({ top: offset, behavior: "smooth" });
-        }
-      }, 400);
-      return;
-    }
-
-    // Если мы уже на главной — просто скроллим
-    if (homeSections.includes(section)) {
-      const el = document.getElementById(section);
-      if (el) {
-        const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
-        window.scrollTo({ top: offset, behavior: "smooth" });
-      }
-      return;
-    }
-
-    // Всё остальное — обычная навигация
     navigate(path);
+    setActiveDropdown(null);
+    setIsMenuOpen(false);
   };
 
   // Управление выпадающими меню

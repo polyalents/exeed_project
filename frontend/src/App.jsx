@@ -1,59 +1,72 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
 import HomePage from "./pages/HomePage";
 import PolicyPage from "./pages/PolicyPage";
 import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
 import ConsentPage from "./pages/ConsentPage";
+
 import { ModalProvider } from "./context/ModalContext";
-import Footer from "./components/Footer/Footer";
 import CookieConsent from "./components/CookieConsent/CookieConsent";
 import Metrics from "./components/Metrics/Metrics";
 import Header from "./components/Header/Header";
 
+/* ===========================
+   Мягкий контролируемый скролл
+=========================== */
 const ScrollHandler = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const scrollTarget = location.pathname.replace("/", "");
+    const path = location.pathname.replace("/", "");
     const sections = [
-      "exeed-models", "exlantix-models", "exeed-lx", "exeed-txl",
-      "exeed-rx", "exeed-vx", "exlantix-et", "exlantix-es",
-      "credit", "test-drive", "trade-in", "dealers"
+      "exeed-models",
+      "exlantix-models",
+      "exeed-lx",
+      "exeed-txl",
+      "exeed-rx",
+      "exeed-vx",
+      "exlantix-et",
+      "exlantix-es",
+      "credit",
+      "test-drive",
+      "trade-in",
+      "dealers",
     ];
 
-    if (!scrollTarget || !sections.includes(scrollTarget)) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    // если это не секция, просто вверх (без дёрганья)
+    if (!sections.includes(path)) {
+      window.scrollTo({ top: 0 });
       return;
     }
 
-    const scrollToSection = () => {
-      const el = document.getElementById(scrollTarget);
+    const tryScroll = () => {
+      const el = document.getElementById(path);
       if (el) {
         const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top: offset, behavior: "smooth" });
-        return true;
-      }
-      return false;
-    };
-
-    let attempts = 0;
-    const tryScroll = () => {
-      const success = scrollToSection();
-      if (!success && attempts < 30) {
-        attempts++;
-        requestAnimationFrame(tryScroll);
       }
     };
 
-    requestAnimationFrame(() => {
-      setTimeout(() => tryScroll(), 200);
-    });
+    // плавное ожидание рендера DOM
+    setTimeout(() => {
+      requestAnimationFrame(tryScroll);
+    }, 250);
   }, [location.pathname]);
 
   return null;
 };
 
+/* ===========================
+   Основное приложение
+=========================== */
 function App() {
   const [consent, setConsent] = useState(null);
 
@@ -71,9 +84,10 @@ function App() {
   return (
     <Router>
       <ModalProvider>
-        <ScrollHandler />
         <Header />
-        <main className="flex-grow">
+        <ScrollHandler />
+
+        <main className="flex-grow bg-gray-50">
           <Routes>
             {/* Главная и секции */}
             <Route path="/" element={<HomePage />} />
@@ -98,10 +112,9 @@ function App() {
           </Routes>
         </main>
 
-        {/* Футер — только для главной */}
-        {window.location.pathname === "/" && <Footer />}
-
+        {/* Cookie-баннер */}
         {consent === null && <CookieConsent onConsent={handleConsent} />}
+        {/* Метрики */}
         {consent === true && <Metrics />}
       </ModalProvider>
     </Router>

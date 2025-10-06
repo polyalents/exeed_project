@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header/Header';
+import Footer from "../components/Footer/Footer";
 import HeroSection from '../components/HeroSection';
 import DealersMapSection from '../components/DealersMapSection';
 import apiService from '../services/api';
@@ -13,84 +14,69 @@ const HomePage = ({ scrollTo }) => {
   const { openModal } = useModal();
 
   // Состояния и обработчики для формы тест-драйва
-const [formData, setFormData] = useState({ phone: "" });
-const [errors, setErrors] = useState({});
-const [captcha, setCaptcha] = useState(null);
-const [isSubmitted, setIsSubmitted] = useState(false);
-const [showSuccess, setShowSuccess] = useState(false);
+  const [formData, setFormData] = useState({ phone: "" });
+  const [errors, setErrors] = useState({});
+  const [captcha, setCaptcha] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-const validateForm = () => {
-  const newErrors = {};
-  const phoneNumbers = formData.phone.replace(/\D/g, "");
+  const validateForm = () => {
+    const newErrors = {};
+    const phoneNumbers = formData.phone.replace(/\D/g, "");
 
-  if (phoneNumbers.length !== 11) {
-    newErrors.phone = "Введите корректный номер телефона";
-  } else {
-    const firstDigitAfter7 = phoneNumbers.charAt(1);
-    if (!["8", "9"].includes(firstDigitAfter7)) {
-      newErrors.phone = "Номер должен начинаться с +7 8__ или +7 9__";
+    if (phoneNumbers.length !== 11) {
+      newErrors.phone = "Введите корректный номер телефона";
+    } else {
+      const firstDigitAfter7 = phoneNumbers.charAt(1);
+      if (!["8", "9"].includes(firstDigitAfter7)) {
+        newErrors.phone = "Номер должен начинаться с +7 8__ или +7 9__";
+      }
     }
-  }
 
-  if (!captcha) newErrors.captcha = "Подтвердите, что вы не робот";
+    if (!captcha) newErrors.captcha = "Подтвердите, что вы не робот";
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  
-  if (!validateForm()) return;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
 
-  // имитация успешной отправки (например, await apiService.sendLead(formData))
-  setShowSuccess(true);
-  setIsSubmitted(true);
+    // имитация успешной отправки (например, await apiService.sendLead(formData))
+    setShowSuccess(true);
+    setIsSubmitted(true);
 
-  // очистка ошибок и капчи
-  setErrors({});
-  setCaptcha(null);
-};
+    // очистка ошибок и капчи
+    setErrors({});
+    setCaptcha(null);
+  };
 
-const resetAndRefresh = () => {
-  setFormData({ phone: "" });
-  setCaptcha(null);
-  setErrors({});
-  setIsSubmitted(false);
-  setShowSuccess(false);
-};
+  const resetAndRefresh = () => {
+    setFormData({ phone: "" });
+    setCaptcha(null);
+    setErrors({});
+    setIsSubmitted(false);
+    setShowSuccess(false);
+  };
 
-  // ВСТАВИТЬ ЭТОТ БЛОК ЗДЕСЬ:
+  // Единственный useEffect для скролла - срабатывает при изменении scrollTo
   useEffect(() => {
-    if (scrollTo) {
-      const timer = setTimeout(() => {
-        const element = document.getElementById(scrollTo);
-        if (element) {
-          const headerOffset = 80;
-          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
+    if (!scrollTo) return;
+    
+    const element = document.getElementById(scrollTo);
+    if (!element) return;
+    
+    const headerOffset = 80;
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - headerOffset;
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
   }, [scrollTo]);
-
-  // 2. Скролл при прямом вводе URL в адресную строку (после загрузки данных)
-  useEffect(() => {
-    if (!loading && scrollTo) {
-      const timer = setTimeout(() => {
-        const element = document.getElementById(scrollTo);
-        if (element) {
-          const headerOffset = 80;
-          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 600); // БЫЛО 300, СТАЛО 600
-      return () => clearTimeout(timer);
-    }
-  }, [loading, scrollTo]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,384 +102,368 @@ const resetAndRefresh = () => {
   const exeedModels = models.filter(model => model.brand === 'EXEED');
   const exlantixModels = models.filter(model => model.brand === 'EXLANTIX');
 
-  // Компонент карточки модели - ИСПРАВЛЕННАЯ АДАПТИВНОСТЬ
-// Компонент карточки модели с ФИКСИРОВАННОЙ ВЫСОТОЙ 600px
-// КОМПОНЕНТ для overlay характеристик
-// КОМПОНЕНТ для overlay характеристик (адаптивный, с шестерёнкой и каплей для EXLANTIX)
-// Современный адаптивный оверлей характеристик модели
-// Современный адаптивный оверлей характеристик модели (обновлённая шестерёнка)
-// Современный адаптивный оверлей характеристик модели (финальная версия)
-const ModelSpecsOverlay = ({ model }) => {
-  const getModelSpecs = (modelName) => {
-    switch (modelName) {
-      case 'EXEED LX':
-        return { power: '150 л.с.', acceleration: '11.2 с', consumption: '7.7 л', drive: 'AWD' };
-      case 'EXEED TXL':
-        return { power: '197 л.с.', acceleration: '9.8 с', consumption: '8.2 л', drive: 'AWD' };
-      case 'EXEED RX':
-        return { power: '254 л.с.', acceleration: '7.9 с', consumption: '7.8 л', drive: 'AWD' };
-      case 'EXEED VX':
-        return { power: '290 л.с.', acceleration: '7.1 с', consumption: '9.1 л', drive: 'AWD' };
-      case 'EXLANTIX ET':
-        return { power: '408 л.с.', acceleration: '4.3 с', torque: '634 Нм', range: '1180 км' };
-      case 'EXLANTIX ES':
-        return { power: '365 л.с.', acceleration: '4.9 с', torque: '634 Нм', range: '1231 км' };
-      default:
-        return { power: '150 л.с.', acceleration: '8.5 с', consumption: '7.5 л', drive: 'AWD' };
-    }
-  };
+  // Компонент для overlay характеристик
+  const ModelSpecsOverlay = ({ model }) => {
+    const getModelSpecs = (modelName) => {
+      switch (modelName) {
+        case 'EXEED LX':
+          return { power: '150 л.с.', acceleration: '11.2 с', consumption: '7.7 л', drive: 'AWD' };
+        case 'EXEED TXL':
+          return { power: '197 л.с.', acceleration: '9.8 с', consumption: '8.2 л', drive: 'AWD' };
+        case 'EXEED RX':
+          return { power: '254 л.с.', acceleration: '7.9 с', consumption: '7.8 л', drive: 'AWD' };
+        case 'EXEED VX':
+          return { power: '290 л.с.', acceleration: '7.1 с', consumption: '9.1 л', drive: 'AWD' };
+        case 'EXLANTIX ET':
+          return { power: '408 л.с.', acceleration: '4.3 с', torque: '634 Нм', range: '1180 км' };
+        case 'EXLANTIX ES':
+          return { power: '365 л.с.', acceleration: '4.9 с', torque: '634 Нм', range: '1231 км' };
+        default:
+          return { power: '150 л.с.', acceleration: '8.5 с', consumption: '7.5 л', drive: 'AWD' };
+      }
+    };
 
-  const specs = getModelSpecs(model.name);
-  const isExlantix = model.name?.startsWith('EXLANTIX');
+    const specs = getModelSpecs(model.name);
+    const isExlantix = model.name?.startsWith('EXLANTIX');
 
-  // Иконки (встроенные SVG)
-  const icons = {
-    power: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-    ),
-    acceleration: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-    consumption: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
-        <path d="M12 2.5C8.5 2.5 5.5 5.3 5.5 8.8 5.5 13.2 12 21.5 12 21.5s6.5-8.3 6.5-12.7C18.5 5.3 15.5 2.5 12 2.5Z" />
-      </svg>
-    ),
-    drive: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
-        <rect x="3" y="11" width="18" height="2" fill="currentColor" />
-        <circle cx="7" cy="16" r="2" stroke="currentColor" strokeWidth="2" />
-        <circle cx="17" cy="16" r="2" stroke="currentColor" strokeWidth="2" />
-        <circle cx="7" cy="8" r="2" stroke="currentColor" strokeWidth="2" />
-        <circle cx="17" cy="8" r="2" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    ),
-    torque: (
-      // ТВОЙ SVG — ровная красивая шестерёнка
-    <svg
-      viewBox="0 0 24 24"
-      className="w-7 h-7 text-orange-400"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {/* базовый контур шестерни — внешний круг */}
-      <circle cx="12" cy="12" r="6.5" />
-
-      {/* 8 ровных зубцов, без внутренней дырки */}
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(45 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(90 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(135 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(180 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(225 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(270 12 12)" />
-      <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(315 12 12)" />
-    </svg>
-    ),
-    range: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
-        <path
-          d="M12 2C7 8 5 10 5 14a7 7 0 0014 0c0-4-2-6-7-12z"
+    const icons = {
+      power: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      ),
+      acceleration: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      ),
+      consumption: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
+          <path d="M12 2.5C8.5 2.5 5.5 5.3 5.5 8.8 5.5 13.2 12 21.5 12 21.5s6.5-8.3 6.5-12.7C18.5 5.3 15.5 2.5 12 2.5Z" />
+        </svg>
+      ),
+      drive: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
+          <rect x="3" y="11" width="18" height="2" fill="currentColor" />
+          <circle cx="7" cy="16" r="2" stroke="currentColor" strokeWidth="2" />
+          <circle cx="17" cy="16" r="2" stroke="currentColor" strokeWidth="2" />
+          <circle cx="7" cy="8" r="2" stroke="currentColor" strokeWidth="2" />
+          <circle cx="17" cy="8" r="2" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      ),
+      torque: (
+        <svg
+          viewBox="0 0 24 24"
+          className="w-7 h-7 text-orange-400"
+          fill="none"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-        />
-      </svg>
-    ),
+        >
+          <circle cx="12" cy="12" r="6.5" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(45 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(90 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(135 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(180 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(225 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(270 12 12)" />
+          <rect x="11" y="1.5" width="2" height="4" rx="0.6" transform="rotate(315 12 12)" />
+        </svg>
+      ),
+      range: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="none">
+          <path
+            d="M12 2C7 8 5 10 5 14a7 7 0 0014 0c0-4-2-6-7-12z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    };
+
+    const items = isExlantix
+      ? [
+          { key: 'power', label: 'Мощность', value: specs.power, icon: icons.power },
+          { key: 'acceleration', label: 'до 100 км/ч', value: specs.acceleration, icon: icons.acceleration },
+          { key: 'torque', label: 'Крутящий момент', value: specs.torque, icon: icons.torque },
+          { key: 'range', label: 'Запас хода', value: specs.range, icon: icons.range },
+        ]
+      : [
+          { key: 'power', label: 'Мощность', value: specs.power, icon: icons.power },
+          { key: 'acceleration', label: 'до 100 км/ч', value: specs.acceleration, icon: icons.acceleration },
+          { key: 'consumption', label: 'Расход', value: specs.consumption, icon: icons.consumption },
+          { key: 'drive', label: 'Привод', value: specs.drive, icon: icons.drive },
+        ];
+
+    return (
+      <div
+        className="
+          absolute bottom-0 left-0 right-0
+          bg-gradient-to-t from-black/80 via-black/30 to-transparent
+          backdrop-blur-md
+          px-3 py-3 sm:px-5 sm:py-4 lg:px-8 lg:py-6
+          pointer-events-none
+        "
+      >
+        {/* ПК */}
+        <div className="hidden md:flex justify-center items-center gap-10 lg:gap-16 text-white">
+          {items.map((item) => (
+            <div key={item.key} className="flex flex-col items-center group transition-all">
+              <div className="mb-2 group-hover:scale-110 transition-transform duration-200">{item.icon}</div>
+              <div className="text-xs text-gray-300 uppercase tracking-wider">{item.label}</div>
+              <div className="text-lg font-semibold">{item.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Мобильная версия */}
+        <div className="flex justify-between items-end text-white md:hidden px-2 py-2 text-[9px] leading-tight">
+          {items.map((item) => (
+            <div 
+              key={item.key} 
+              className="flex flex-col items-center justify-end flex-1 min-w-0 text-center space-y-[2px]"
+            >
+              <div className="w-5 h-5 flex items-center justify-center text-orange-400">
+                {React.cloneElement(item.icon, { className: 'w-5 h-5 text-orange-400' })}
+              </div>
+              <div className="text-[8px] text-gray-300 uppercase tracking-wider">{item.label}</div>
+              <div className="text-[10px] font-semibold">{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
-  const items = isExlantix
-    ? [
-        { key: 'power', label: 'Мощность', value: specs.power, icon: icons.power },
-        { key: 'acceleration', label: 'до 100 км/ч', value: specs.acceleration, icon: icons.acceleration },
-        { key: 'torque', label: 'Крутящий момент', value: specs.torque, icon: icons.torque },
-        { key: 'range', label: 'Запас хода', value: specs.range, icon: icons.range },
-      ]
-    : [
-        { key: 'power', label: 'Мощность', value: specs.power, icon: icons.power },
-        { key: 'acceleration', label: 'до 100 км/ч', value: specs.acceleration, icon: icons.acceleration },
-        { key: 'consumption', label: 'Расход', value: specs.consumption, icon: icons.consumption },
-        { key: 'drive', label: 'Привод', value: specs.drive, icon: icons.drive },
-      ];
-
-  return (
-    <div
-      className="
-        absolute bottom-0 left-0 right-0
-        bg-gradient-to-t from-black/80 via-black/30 to-transparent
-        backdrop-blur-md
-        px-3 py-3 sm:px-5 sm:py-4 lg:px-8 lg:py-6
-        pointer-events-none
-      "
-    >
-      {/* ПК */}
-      <div className="hidden md:flex justify-center items-center gap-10 lg:gap-16 text-white">
-        {items.map((item) => (
-          <div key={item.key} className="flex flex-col items-center group transition-all">
-            <div className="mb-2 group-hover:scale-110 transition-transform duration-200">{item.icon}</div>
-            <div className="text-xs text-gray-300 uppercase tracking-wider">{item.label}</div>
-            <div className="text-lg font-semibold">{item.value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Мобильная сетка */}
-{/* Мобильная версия — компактная, ровная, в одну линию */}
-<div className="flex justify-between items-end text-white md:hidden px-2 py-2 text-[9px] leading-tight">
-  {items.map((item) => (
-    <div 
-      key={item.key} 
-      className="flex flex-col items-center justify-end flex-1 min-w-0 text-center space-y-[2px]"
-    >
-      <div className="w-5 h-5 flex items-center justify-center text-orange-400">
-        {React.cloneElement(item.icon, { className: 'w-5 h-5 text-orange-400' })}
-      </div>
-      <div className="text-[8px] text-gray-300 uppercase tracking-wider">{item.label}</div>
-      <div className="text-[10px] font-semibold">{item.value}</div>
-    </div>
-  ))}
-</div>
-
-    </div>
-  );
-};
-
-// ОБНОВЛЕННЫЙ компонент ModelCard С OVERLAY
-const ModelCard = ({ model, index, isExlantix = false }) => (
-  <div className={`homepage-model-card ${
-    index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''
-  }`}>
-    {/* Изображение с overlay характеристик */}
-    <div className={`order-1 lg:order-none ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
-      <div className="homepage-model-image-fullwidth relative">
-        <img
-          src={model.image}
-          alt={model.name}
-          className="homepage-model-image"
-          loading="lazy"
-        />
-        {/* OVERLAY с характеристиками */}
-        <ModelSpecsOverlay model={model} />
-      </div>
-    </div>
-    
-    {/* Остальной контент без изменений */}
-    <div className={`homepage-model-content order-2 lg:order-none ${
-      index % 2 === 1 ? 'lg:col-start-1' : ''
+  // Компонент карточки модели
+  const ModelCard = ({ model, index, isExlantix = false }) => (
+    <div className={`homepage-model-card ${
+      index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''
     }`}>
-      {/* Заголовок с вертикальной полоской */}
-      <div className="space-y-4">
-        <div className="flex items-start space-x-3 lg:space-x-4">
-          <div className="w-1 h-12 lg:h-16 bg-orange-500 mt-1"></div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm lg:text-lg font-semibold text-gray-600 mb-2 leading-tight">
-              {(() => {
-                switch(model.name) {
-                  case 'EXEED LX': return 'Компактный премиальный внедорожник';
-                  case 'EXEED TXL': return 'Премиальный среднеразмерный внедорожник';
-                  case 'EXEED RX': return 'Новое поколение премиум класса';
-                  case 'EXEED VX': return 'Полноразмерный внедорожник';
-                  case 'EXLANTIX ET': return 'Технологическая платформа будущего';
-                  case 'EXLANTIX ES': return 'Гибридное четырехдверное купе';
-                  default: return 'Инновационный автомобиль';
-                }
-              })()}
-            </p>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading font-bold text-black leading-tight break-words">
-              {(() => {
-                switch(model.name) {
-                  case 'EXEED LX': return 'НОВЫЙ EXEED LX';
-                  case 'EXEED TXL': return 'НОВЫЙ EXEED TXL';
-                  case 'EXEED VX': return 'НОВЫЙ EXEED VX';
-                  default: return model.name;
-                }
-              })()}
-            </h3>
-          </div>
+      {/* Изображение с overlay характеристик */}
+      <div className={`order-1 lg:order-none ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
+        <div className="homepage-model-image-fullwidth relative">
+          <img
+            src={model.image}
+            alt={model.name}
+            className="homepage-model-image"
+            loading="lazy"
+          />
+          <ModelSpecsOverlay model={model} />
         </div>
       </div>
       
-      {/* Выгода */}
-      <div className="mt-4 lg:mt-6">
-      <p className="text-base lg:text-lg font-semibold text-orange-500 mb-2">
-        {(() => {
-          const modelName = (model?.name || '').trim().toUpperCase();
-          switch (modelName) {
-            case 'EXEED LX FL': return 'Выгода до 610 000 ₽';
-            case 'EXEED TXL FL': return 'Выгода до 650 000 ₽';
-            case 'EXEED RX': return 'Выгода до 900 000 ₽';
-            case 'EXEED VX FL': return 'Выгода до 1 475 000 ₽';
-            case 'EXLANTIX ET': return 'Выгода до 300 000 ₽';
-            case 'EXLANTIX ES': return 'Выгода до 300 000 ₽';
-            default: return 'Специальные условия';
-          }
-        })()}
-      </p>
+      {/* Контент */}
+      <div className={`homepage-model-content order-2 lg:order-none ${
+        index % 2 === 1 ? 'lg:col-start-1' : ''
+      }`}>
+        {/* Заголовок с вертикальной полоской */}
+        <div className="space-y-4">
+          <div className="flex items-start space-x-3 lg:space-x-4">
+            <div className="w-1 h-12 lg:h-16 bg-orange-500 mt-1"></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm lg:text-lg font-semibold text-gray-600 mb-2 leading-tight">
+                {(() => {
+                  switch(model.name) {
+                    case 'EXEED LX': return 'Компактный премиальный внедорожник';
+                    case 'EXEED TXL': return 'Премиальный среднеразмерный внедорожник';
+                    case 'EXEED RX': return 'Новое поколение премиум класса';
+                    case 'EXEED VX': return 'Полноразмерный внедорожник';
+                    case 'EXLANTIX ET': return 'Технологическая платформа будущего';
+                    case 'EXLANTIX ES': return 'Гибридное четырехдверное купе';
+                    default: return 'Инновационный автомобиль';
+                  }
+                })()}
+              </p>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading font-bold text-black leading-tight break-words">
+                {(() => {
+                  switch(model.name) {
+                    case 'EXEED LX': return 'НОВЫЙ EXEED LX';
+                    case 'EXEED TXL': return 'НОВЫЙ EXEED TXL';
+                    case 'EXEED VX': return 'НОВЫЙ EXEED VX';
+                    default: return model.name;
+                  }
+                })()}
+              </h3>
+            </div>
+          </div>
+        </div>
         
-        {/* Описание */}
-        <p className="text-sm lg:text-lg text-gray-700 leading-relaxed mb-4 lg:mb-6">
+        {/* Выгода */}
+        <div className="mt-4 lg:mt-6">
+          <p className="text-base lg:text-lg font-semibold text-orange-500 mb-2">
+            {(() => {
+              const modelName = (model?.name || '').trim().toUpperCase();
+              switch (modelName) {
+                case 'EXEED LX FL': return 'Выгода до 610 000 ₽';
+                case 'EXEED TXL FL': return 'Выгода до 650 000 ₽';
+                case 'EXEED RX': return 'Выгода до 900 000 ₽';
+                case 'EXEED VX FL': return 'Выгода до 1 475 000 ₽';
+                case 'EXLANTIX ET': return 'Выгода до 300 000 ₽';
+                case 'EXLANTIX ES': return 'Выгода до 300 000 ₽';
+                default: return 'Специальные условия';
+              }
+            })()}
+          </p>
+          
+          {/* Описание */}
+          <p className="text-sm lg:text-lg text-gray-700 leading-relaxed mb-4 lg:mb-6">
+            {(() => {
+              switch(model.name) {
+                case 'EXEED LX': 
+                  return 'Новый EXEED LX — это компактный премиальный внедорожник, который сочетает в себе стильный дизайн, современные технологии и универсальность.';
+                case 'EXEED TXL':
+                  return 'EXEED TXL предлагает идеальное сочетание роскоши и практичности в среднеразмерном внедорожнике премиум-класса.';
+                case 'EXEED RX':
+                  return 'EXEED RX воплощает в себе новое поколение автомобилей премиум-класса с передовыми технологиями и элегантным дизайном.';
+                case 'EXEED VX':
+                  return 'EXEED VX — флагманский полноразмерный внедорожник, представляющий вершину инженерного мастерства и роскоши.';
+                case 'EXLANTIX ET':
+                  return 'EXLANTIX ET — электрический кроссовер будущего с революционными технологиями и экологичным подходом.';
+                case 'EXLANTIX ES':
+                  return 'EXLANTIX ES — гибридное четырехдверное купе, объединяющее элегантность и инновационные решения.';
+                default: 
+                  return 'Инновационный автомобиль с передовыми технологиями и премиальным качеством.';
+              }
+            })()}
+          </p>
+        </div>
+        
+        {/* Ключевые особенности */}
+        <div className="space-y-3 mb-4 lg:mb-6">
           {(() => {
             switch(model.name) {
-              case 'EXEED LX': 
-                return 'Новый EXEED LX — это компактный премиальный внедорожник, который сочетает в себе стильный дизайн, современные технологии и универсальность.';
-              case 'EXEED TXL':
-                return 'EXEED TXL предлагает идеальное сочетание роскоши и практичности в среднеразмерном внедорожнике премиум-класса.';
+              case 'EXEED LX FL':
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Турбодвигатель 1.6L</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Полный привод AWD</span>
+                    </div>
+                  </>
+                );
+              case 'EXEED TXL FL':
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Двигатель 2.0T</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Панорамная крыша</span>
+                    </div>
+                  </>
+                );
               case 'EXEED RX':
-                return 'EXEED RX воплощает в себе новое поколение автомобилей премиум-класса с передовыми технологиями и элегантным дизайном.';
-              case 'EXEED VX':
-                return 'EXEED VX — флагманский полноразмерный внедорожник, представляющий вершину инженерного мастерства и роскоши.';
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Гибридная силовая установка</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Система ADAS</span>
+                    </div>
+                  </>
+                );
+              case 'EXEED VX FL':
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">V6 двигатель 3.0T</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Пневматическая подвеска</span>
+                    </div>
+                  </>
+                );
               case 'EXLANTIX ET':
-                return 'EXLANTIX ET — электрический кроссовер будущего с революционными технологиями и экологичным подходом.';
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Электрическая силовая установка</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Запас хода до 600 км</span>
+                    </div>
+                  </>
+                );
               case 'EXLANTIX ES':
-                return 'EXLANTIX ES — гибридное четырехдверное купе, объединяющее элегантность и инновационные решения.';
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Гибридная технология</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Снижение веса на 25%</span>
+                    </div>
+                  </>
+                );
               default: 
-                return 'Инновационный автомобиль с передовыми технологиями и премиальным качеством.';
+                return (
+                  <>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Продвинутые технологии</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-sm lg:text-base">Премиальные материалы</span>
+                    </div>
+                  </>
+                );
             }
           })()}
-        </p>
-      </div>
-      
-      {/* Ключевые особенности */}
-      <div className="space-y-3 mb-4 lg:mb-6">
-        {(() => {
-          switch(model.name) {
-            case 'EXEED LX FL':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Турбодвигатель 1.6L</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Полный привод AWD</span>
-                  </div>
-                </>
-              );
-            case 'EXEED TXL FL':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Двигатель 2.0T</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Панорамная крыша</span>
-                  </div>
-                </>
-              );
-            case 'EXEED RX':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Гибридная силовая установка</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Система ADAS</span>
-                  </div>
-                </>
-              );
-            case 'EXEED VX FL':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">V6 двигатель 3.0T</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Пневматическая подвеска</span>
-                  </div>
-                </>
-              );
-            case 'EXLANTIX ET':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Электрическая силовая установка</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Запас хода до 600 км</span>
-                  </div>
-                </>
-              );
-            case 'EXLANTIX ES':
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Гибридная технология</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Снижение веса на 25%</span>
-                  </div>
-                </>
-              );
-            default: 
-              return (
-                <>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Продвинутые технологии</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-sm lg:text-base">Премиальные материалы</span>
-                  </div>
-                </>
-              );
-          }
-        })()}
-      </div>
-      
-      {/* Цена */}
-      <div className="flex items-baseline gap-3 mt-4">
-        <p className="text-2xl lg:text-3xl font-bold text-black">
-          {model.price}
-        </p>
-        {(() => {
-          switch (model.name) {
-            case 'EXEED LX FL': return <span className="text-gray-500 line-through text-xl">2 790 000 ₽</span>;
-            case 'EXEED TXL FL': return <span className="text-gray-500 line-through text-xl">3 600 000 ₽</span>;
-            case 'EXEED RX': return <span className="text-gray-500 line-through text-xl">4 550 000 ₽</span>;
-            case 'EXEED VX FL': return <span className="text-gray-500 line-through text-xl">6 040 000 ₽</span>;
-            case 'EXLANTIX ET': return <span className="text-gray-500 line-through text-xl">6 600 000 ₽</span>;
-            case 'EXLANTIX ES': return <span className="text-gray-500 line-through text-xl">5 990 000 ₽</span>;
-            default: return null;
-          }
-        })()}
-      </div>
+        </div>
+        
+        {/* Цена */}
+        <div className="flex items-baseline gap-3 mt-4">
+          <p className="text-2xl lg:text-3xl font-bold text-black">
+            {model.price}
+          </p>
+          {(() => {
+            switch (model.name) {
+              case 'EXEED LX FL': return <span className="text-gray-500 line-through text-xl">2 790 000 ₽</span>;
+              case 'EXEED TXL FL': return <span className="text-gray-500 line-through text-xl">3 600 000 ₽</span>;
+              case 'EXEED RX': return <span className="text-gray-500 line-through text-xl">4 550 000 ₽</span>;
+              case 'EXEED VX FL': return <span className="text-gray-500 line-through text-xl">6 040 000 ₽</span>;
+              case 'EXLANTIX ET': return <span className="text-gray-500 line-through text-xl">6 600 000 ₽</span>;
+              case 'EXLANTIX ES': return <span className="text-gray-500 line-through text-xl">5 990 000 ₽</span>;
+              default: return null;
+            }
+          })()}
+        </div>
 
-      <hr className="border-t-2 border-orange-500 mt-3" />
-
+        <hr className="border-t-2 border-orange-500 mt-3" />
+      </div>
     </div>
-  </div>
-);
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-x-hidden">
       <Header />
       <HeroSection />
 
       {/* EXEED Models Section */}
       <section id="exeed-models" className="pt-12 lg:pt-20 pb-8 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Заголовок секции */}
           <div className="text-center mb-12 lg:mb-16">
             <div className="flex items-center justify-center space-x-2 lg:space-x-4 mb-6">
               <div className="w-8 lg:w-12 h-1 bg-orange-500"></div>
@@ -531,7 +501,6 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       {/* EXLANTIX Models Section */}
       <section id="exlantix-models" className="-mt-8 pt-12 lg:pt-20 pb-0 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Заголовок секции */}
           <div className="text-center mb-12 lg:mb-16">
             <div className="flex items-center justify-center space-x-2 lg:space-x-4 mb-6">
               <div className="w-8 lg:w-12 h-1 bg-orange-500"></div>
@@ -571,137 +540,137 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
         </div>
       </section>
 
-<section id="test-drive" className="py-20 bg-gradient-to-b from-[#ff9335] to-[#e86b1c] relative overflow-hidden">
-  <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-12">
-    
-    {/* Левая часть */}
-    <div className="flex-1 flex flex-col items-center lg:items-start justify-center text-center lg:text-left space-y-8">
-      <div className="hidden sm:flex items-center justify-center gap-4 mb-6">
-        <img
-          src="/static/images/testdrive/main-banner.webp"
-          alt="Exeed Test Drive Road"
-          className="w-[360px] h-[360px] object-cover rounded-lg shadow-md"
-          loading="lazy"
-        />
-        <img
-          src="/static/images/testdrive/secondary.webp"
-          alt="Exeed App Experience"
-          className="w-[200px] h-[200px] object-cover rounded-lg shadow-md"
-          loading="lazy"
-        />
-      </div>
+      {/* Test Drive Section */}
+      <section id="test-drive" className="py-20 bg-gradient-to-b from-[#ff9335] to-[#e86b1c] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-12">
+          
+          {/* Левая часть */}
+          <div className="flex-1 flex flex-col items-center lg:items-start justify-center text-center lg:text-left space-y-8">
+            <div className="hidden sm:flex items-center justify-center gap-4 mb-6">
+              <img
+                src="/static/images/testdrive/main-banner.webp"
+                alt="Exeed Test Drive Road"
+                className="w-[360px] h-[360px] object-cover rounded-lg shadow-md"
+                loading="lazy"
+              />
+              <img
+                src="/static/images/testdrive/secondary.webp"
+                alt="Exeed App Experience"
+                className="w-[200px] h-[200px] object-cover rounded-lg shadow-md"
+                loading="lazy"
+              />
+            </div>
 
-      <h2
-        className="text-[46px] font-heading font-extrabold tracking-tight text-white text-center lg:text-left"
-        style={{
-          textShadow: `
-            0px 2px 4px rgba(0, 0, 0, 0.3),
-            0px 4px 8px rgba(0, 0, 0, 0.25),
-            0px 6px 12px rgba(0, 0, 0, 0.15)
-          `,
-        }}
-      >
-        ТЕСТ-ДРАЙВ
-      </h2>
-    </div>
+            <h2
+              className="text-[46px] font-heading font-extrabold tracking-tight text-white text-center lg:text-left"
+              style={{
+                textShadow: `
+                  0px 2px 4px rgba(0, 0, 0, 0.3),
+                  0px 4px 8px rgba(0, 0, 0, 0.25),
+                  0px 6px 12px rgba(0, 0, 0, 0.15)
+                `,
+              }}
+            >
+              ТЕСТ-ДРАЙВ
+            </h2>
+          </div>
 
-    {/* Правая часть — форма */}
-    <div className="flex-1 bg-white/95 text-black p-10 border border-gray-300 rounded-xl shadow-sm backdrop-blur-sm relative overflow-hidden">
-      <h3 className="text-[30px] font-bold text-center mb-6 tracking-tight text-black">
-        Пробная поездка
-      </h3>
-      <p className="text-sm text-gray-800 mb-6 text-center">
-        Оставьте номер — наш специалист свяжется с вами и подберёт удобное время для поездки.
-      </p>
+          {/* Правая часть — форма */}
+          <div className="flex-1 bg-white/95 text-black p-10 border border-gray-300 rounded-xl shadow-sm backdrop-blur-sm relative overflow-hidden">
+            <h3 className="text-[30px] font-bold text-center mb-6 tracking-tight text-black">
+              Пробная поездка
+            </h3>
+            <p className="text-sm text-gray-800 mb-6 text-center">
+              Оставьте номер — наш специалист свяжется с вами и подберёт удобное время для поездки.
+            </p>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!validateForm()) return;
-          setShowSuccess(true);
-        }}
-        className="space-y-6"
-      >
-        <div>
-          <input
-            type="tel"
-            inputMode="numeric"
-            placeholder="+7 (___) ___-__-__"
-            value={formData.phone}
-            onChange={(e) => {
-              let digits = e.target.value.replace(/\D/g, "");
-              if (digits.length > 11) digits = digits.slice(0, 11);
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!validateForm()) return;
+                setShowSuccess(true);
+              }}
+              className="space-y-6"
+            >
+              <div>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="+7 (___) ___-__-__"
+                  value={formData.phone}
+                  onChange={(e) => {
+                    let digits = e.target.value.replace(/\D/g, "");
+                    if (digits.length > 11) digits = digits.slice(0, 11);
 
-              let formatted = "+7";
-              if (digits.length > 1) formatted += ` (${digits.slice(1, 4)}`;
-              if (digits.length >= 4) formatted += `) ${digits.slice(4, 7)}`;
-              if (digits.length >= 7) formatted += `-${digits.slice(7, 9)}`;
-              if (digits.length >= 9) formatted += `-${digits.slice(9, 11)}`;
+                    let formatted = "+7";
+                    if (digits.length > 1) formatted += ` (${digits.slice(1, 4)}`;
+                    if (digits.length >= 4) formatted += `) ${digits.slice(4, 7)}`;
+                    if (digits.length >= 7) formatted += `-${digits.slice(7, 9)}`;
+                    if (digits.length >= 9) formatted += `-${digits.slice(9, 11)}`;
 
-              setFormData({ phone: formatted });
-            }}
-            maxLength={18}
-            className="w-full border border-gray-300 rounded-md bg-white px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-300 font-mono tracking-wide"
-          />
-          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-        </div>
+                    setFormData({ phone: formatted });
+                  }}
+                  maxLength={18}
+                  className="w-full border border-gray-300 rounded-md bg-white px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-300 font-mono tracking-wide"
+                />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              </div>
 
-        <div className="pt-2 w-full flex justify-center">
-          <div className="inline-block w-full max-w-[100%] overflow-hidden">
-            <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              onChange={setCaptcha}
-            />
+              <div className="pt-2 w-full flex justify-center">
+                <div className="inline-block w-full max-w-[100%] overflow-hidden">
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={setCaptcha}
+                  />
+                </div>
+              </div>
+              {errors.captcha && (
+                <p className="text-red-400 text-sm text-center">{errors.captcha}</p>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-black text-white py-3 font-semibold text-base rounded-md border border-black transition-all duration-500 hover:bg-white hover:text-black"
+              >
+                ЗАПИСАТЬСЯ НА ПОЕЗДКУ
+              </button>
+
+              <p className="text-xs text-gray-600 text-center leading-snug">
+                Отправляя форму, вы соглашаетесь с{" "}
+                <a href="#" className="underline hover:text-black transition-colors duration-200">
+                  политикой обработки персональных данных
+                </a>.
+              </p>
+            </form>
           </div>
         </div>
-        {errors.captcha && (
-          <p className="text-red-400 text-sm text-center">{errors.captcha}</p>
+
+        {/* Всплывающее окно успеха */}
+        {showSuccess && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
+            <div className="bg-[#1f1f1f] text-white rounded-2xl px-8 py-10 max-w-sm w-[90%] text-center shadow-xl">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-2">Заявка успешно отправлена!</h3>
+              <p className="text-gray-300 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+              <button
+                onClick={() => {
+                  setShowSuccess(false);
+                  setFormData({ phone: "" });
+                  setCaptcha(null);
+                  setErrors({});
+                }}
+                className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-semibold transition"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
         )}
-
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-3 font-semibold text-base rounded-md border border-black transition-all duration-500 hover:bg-white hover:text-black"
-        >
-          ЗАПИСАТЬСЯ НА ПОЕЗДКУ
-        </button>
-
-        <p className="text-xs text-gray-600 text-center leading-snug">
-          Отправляя форму, вы соглашаетесь с{" "}
-          <a href="#" className="underline hover:text-black transition-colors duration-200">
-            политикой обработки персональных данных
-          </a>.
-        </p>
-      </form>
-    </div>
-  </div>
-
-  {/* Всплывающее окно УСПЕХА */}
-  {showSuccess && (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
-      <div className="bg-[#1f1f1f] text-white rounded-2xl px-8 py-10 max-w-sm w-[90%] text-center shadow-xl">
-        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold mb-2">Заявка успешно отправлена!</h3>
-        <p className="text-gray-300 mb-6">Мы свяжемся с вами в ближайшее время.</p>
-        <button
-          onClick={() => {
-            setShowSuccess(false);
-            setFormData({ phone: "" });
-            setCaptcha(null);
-            setErrors({});
-          }}
-          className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-semibold transition"
-        >
-          Закрыть
-        </button>
-      </div>
-    </div>
-  )}
-</section>
-
+      </section>
 
       {/* Credit Section */}
       <section id="credit" className="py-12 lg:py-20 bg-gray-50">
@@ -792,197 +761,197 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
         </div>
       </section>
 
-<section
-  id="trade-in"
-  className="relative py-16 bg-gradient-to-b from-[#ff9335] to-[#e86b1c] overflow-hidden scroll-mt-20"
->
-  <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center lg:items-start relative">
-
-    {/* Левая часть */}
-    <div className="relative flex-1 z-10">
-
-      {/* Простой овал вокруг заголовка - только на десктопе */}
-      <svg
-        className="absolute -top-8 -left-12 w-[400px] h-[140px] hidden xl:block"
-        viewBox="0 0 400 140"
-        xmlns="http://www.w3.org/2000/svg"
+      {/* Trade-in Section */}
+      <section
+        id="trade-in"
+        className="relative py-16 bg-gradient-to-b from-[#ff9335] to-[#e86b1c] overflow-hidden scroll-mt-20"
       >
-        <ellipse
-          cx="200"
-          cy="70"
-          rx="180"
-          ry="55"
-          stroke="white"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray="1200"
-          strokeDashoffset="1200"
-        >
-          <animate
-            attributeName="stroke-dashoffset"
-            from="1200"
-            to="0"
-            dur="1.8s"
-            fill="freeze"
-            begin="0.3s"
-          />
-        </ellipse>
-      </svg>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row justify-center lg:justify-between items-center lg:items-start relative">
 
-      {/* Мобильный овал */}
-      <svg
-        className="absolute -top-6 -left-8 w-[320px] h-[120px] xl:hidden block"
-        viewBox="0 0 320 120"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <ellipse
-          cx="160"
-          cy="60"
-          rx="150"
-          ry="50"
-          stroke="white"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray="1000"
-          strokeDashoffset="1000"
-        >
-          <animate
-            attributeName="stroke-dashoffset"
-            from="1000"
-            to="0"
-            dur="1.8s"
-            fill="freeze"
-            begin="0.3s"
-          />
-        </ellipse>
-      </svg>
+          {/* Левая часть */}
+          <div className="relative flex-1 z-10">
 
-      {/* Заголовок */}
-      <div className="relative z-10 text-black uppercase leading-tight drop-shadow-[1px_1px_2px_rgba(0,0,0,0.3)] text-center lg:text-left">
-        <h2 className="text-[28px] sm:text-[35px] lg:text-[40px] font-extrabold tracking-tight">ВЫГОДНЫЙ</h2>
-        <h2 className="text-[48px] sm:text-[60px] lg:text-[72px] font-extrabold tracking-tight -mt-2">ОБМЕН</h2>
-      </div>
-
-      {/* Подзаголовок */}
-      <div className="mt-8 text-[16px] sm:text-[18px] font-medium text-black leading-snug text-center lg:text-left">
-        <p>
-          вашего старого автомобиля<br />
-          на новый кроссовер{" "}
-          <span className="text-white font-extrabold relative inline-block">
-            EXEED
+            {/* Десктопный овал */}
             <svg
-              className="absolute left-0 bottom-[-5px] w-full"
-              height="4"
-              viewBox="0 0 100 4"
+              className="absolute -top-8 -left-12 w-[400px] h-[140px] hidden xl:block"
+              viewBox="0 0 400 140"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <line
-                x1="0"
-                y1="2"
-                x2="100"
-                y2="2"
-                stroke="black"
-                strokeWidth="4"
-                strokeDasharray="100"
-                strokeDashoffset="100"
+              <ellipse
+                cx="200"
+                cy="70"
+                rx="180"
+                ry="55"
+                stroke="white"
+                strokeWidth="3"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray="1200"
+                strokeDashoffset="1200"
               >
                 <animate
                   attributeName="stroke-dashoffset"
-                  from="100"
+                  from="1200"
                   to="0"
-                  dur="0.5s"
+                  dur="1.8s"
                   fill="freeze"
                   begin="0.3s"
                 />
-              </line>
+              </ellipse>
             </svg>
-          </span>{" "}
-          или{" "}
-          <span className="text-white font-extrabold relative inline-block">
-            EXLANTIX
+
+            {/* Мобильный овал */}
             <svg
-              className="absolute left-0 bottom-[-5px] w-full"
-              height="4"
-              viewBox="0 0 100 4"
+              className="absolute -top-6 -left-8 w-[320px] h-[120px] xl:hidden block"
+              viewBox="0 0 320 120"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <line
-                x1="0"
-                y1="2"
-                x2="100"
-                y2="2"
-                stroke="black"
-                strokeWidth="4"
-                strokeDasharray="100"
-                strokeDashoffset="100"
+              <ellipse
+                cx="160"
+                cy="60"
+                rx="150"
+                ry="50"
+                stroke="white"
+                strokeWidth="3"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray="1000"
+                strokeDashoffset="1000"
               >
                 <animate
                   attributeName="stroke-dashoffset"
-                  from="100"
+                  from="1000"
                   to="0"
-                  dur="0.5s"
+                  dur="1.8s"
                   fill="freeze"
-                  begin="0.9s"
+                  begin="0.3s"
                 />
-              </line>
+              </ellipse>
             </svg>
-          </span>
-        </p>
-      </div>
 
-      {/* Кнопка */}
-      <div className="flex justify-center lg:justify-start">
-        <button
-          onClick={() => openModal('callback')}
-          className="mt-10 w-full max-w-md lg:w-[320px] h-[52px] rounded-md bg-black text-white text-[15px] font-semibold tracking-wide border border-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-black"
-        >
-          РАССЧИТАТЬ ТРЕЙД-ИН
-        </button>
-      </div>
-    </div>
+            {/* Заголовок */}
+            <div className="relative z-10 text-black uppercase leading-tight drop-shadow-[1px_1px_2px_rgba(0,0,0,0.3)] text-center lg:text-left">
+              <h2 className="text-[28px] sm:text-[35px] lg:text-[40px] font-extrabold tracking-tight">ВЫГОДНЫЙ</h2>
+              <h2 className="text-[48px] sm:text-[60px] lg:text-[72px] font-extrabold tracking-tight -mt-2">ОБМЕН</h2>
+            </div>
 
-    {/* Правая часть - скрыта на мобильных */}
-    <div className="flex-1 relative items-center justify-end hidden xl:flex">
-      <h3 className="absolute text-[100px] font-extrabold uppercase text-black/10 select-none leading-none right-0">
-        ТРЕЙД-ИН
-      </h3>
-      <img
-        src="/static/images/models/ettraid.webp"
-        alt="EXEED TXL Trade-In"
-        className="relative z-10 w-[600px] h-auto mt-8 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
-      />
-    </div>
-  </div>
+            {/* Подзаголовок */}
+            <div className="mt-8 text-[16px] sm:text-[18px] font-medium text-black leading-snug text-center lg:text-left">
+              <p>
+                вашего старого автомобиля<br />
+                на новый кроссовер{" "}
+                <span className="text-white font-extrabold relative inline-block">
+                  EXEED
+                  <svg
+                    className="absolute left-0 bottom-[-5px] w-full"
+                    height="4"
+                    viewBox="0 0 100 4"
+                  >
+                    <line
+                      x1="0"
+                      y1="2"
+                      x2="100"
+                      y2="2"
+                      stroke="black"
+                      strokeWidth="4"
+                      strokeDasharray="100"
+                      strokeDashoffset="100"
+                    >
+                      <animate
+                        attributeName="stroke-dashoffset"
+                        from="100"
+                        to="0"
+                        dur="0.5s"
+                        fill="freeze"
+                        begin="0.3s"
+                      />
+                    </line>
+                  </svg>
+                </span>{" "}
+                или{" "}
+                <span className="text-white font-extrabold relative inline-block">
+                  EXLANTIX
+                  <svg
+                    className="absolute left-0 bottom-[-5px] w-full"
+                    height="4"
+                    viewBox="0 0 100 4"
+                  >
+                    <line
+                      x1="0"
+                      y1="2"
+                      x2="100"
+                      y2="2"
+                      stroke="black"
+                      strokeWidth="4"
+                      strokeDasharray="100"
+                      strokeDashoffset="100"
+                    >
+                      <animate
+                        attributeName="stroke-dashoffset"
+                        from="100"
+                        to="0"
+                        dur="0.5s"
+                        fill="freeze"
+                        begin="0.9s"
+                      />
+                    </line>
+                  </svg>
+                </span>
+              </p>
+            </div>
 
-  {/* Карточки - скрыты на экранах 1023px и ниже */}
-  <div className="max-w-7xl mx-auto mt-2 px-6 lg:px-12 hidden lg:block">
-    <div className="grid grid-cols-5 gap-6">
-      {[
-        "Приезжайте на вашем автомобиле в дилерский центр",
-        "Пройдите экспертную оценку состояния вашего автомобиля",
-        "Выберите новый автомобиль, который вы хотели бы приобрести",
-        "Доплатите разницу в стоимости старого и нового авто",
-        "Забирайте ваш новый автомобиль",
-      ].map((text, i) => (
-        <div
-          key={i}
-          className="relative bg-[#2f2d2d] rounded-xl p-6 text-white h-[220px] shadow-md flex flex-col justify-end hover:translate-y-[-4px] transition-all duration-300"
-        >
-          {/* Цифра */}
-          <span className="absolute top-5 right-6 text-[95px] font-extrabold text-gray-400/25 leading-none select-none">
-            {i + 1}
-          </span>
-          {/* Текст */}
-          <p className="text-[15px] leading-snug font-medium w-[85%] z-10">{text}</p>
+            {/* Кнопка */}
+            <div className="flex justify-center lg:justify-start">
+              <button
+                onClick={() => openModal('callback')}
+                className="mt-10 w-full max-w-md lg:w-[320px] h-[52px] rounded-md bg-black text-white text-[15px] font-semibold tracking-wide border border-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-black"
+              >
+                РАССЧИТАТЬ ТРЕЙД-ИН
+              </button>
+            </div>
+          </div>
+
+          {/* Правая часть */}
+          <div className="flex-1 relative items-center justify-end hidden xl:flex">
+            <h3 className="absolute text-[100px] font-extrabold uppercase text-black/10 select-none leading-none right-0">
+              ТРЕЙД-ИН
+            </h3>
+            <img
+              src="/static/images/models/ettraid.webp"
+              alt="EXEED TXL Trade-In"
+              className="relative z-10 w-[600px] h-auto mt-8 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
+            />
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
 
+        {/* Карточки */}
+        <div className="max-w-7xl mx-auto mt-2 px-6 lg:px-12 hidden lg:block">
+          <div className="grid grid-cols-5 gap-6">
+            {[
+              "Приезжайте на вашем автомобиле в дилерский центр",
+              "Пройдите экспертную оценку состояния вашего автомобиля",
+              "Выберите новый автомобиль, который вы хотели бы приобрести",
+              "Доплатите разницу в стоимости старого и нового авто",
+              "Забирайте ваш новый автомобиль",
+            ].map((text, i) => (
+              <div
+                key={i}
+                className="relative bg-[#2f2d2d] rounded-xl p-6 text-white h-[220px] shadow-md flex flex-col justify-end hover:translate-y-[-4px] transition-all duration-300"
+              >
+                <span className="absolute top-5 right-6 text-[95px] font-extrabold text-gray-400/25 leading-none select-none">
+                  {i + 1}
+                </span>
+                <p className="text-[15px] leading-snug font-medium w-[85%] z-10">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Dealers Section */}
       <DealersMapSection dealers={dealers} />
+      
+      <Footer />
     </div>
   );
 };
