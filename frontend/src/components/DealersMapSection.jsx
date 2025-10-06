@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useModal } from '../context/ModalContext';
 
 const DealersMapSection = ({ dealers = [] }) => {
   const [selectedDealer, setSelectedDealer] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
   const { openModal } = useModal();
 
   const dealerCoordinates = {
@@ -14,11 +15,9 @@ const DealersMapSection = ({ dealers = [] }) => {
 
   const getIframeUrl = () => {
     const baseUrl = 'https://yandex.ru/map-widget/v1/?';
-
     const isMobile =
       typeof window !== 'undefined' && window.innerWidth < 768;
     const zoomLevel = isMobile ? '12' : '13.3';
-
     const params = new URLSearchParams({
       z: zoomLevel,
       ll: `${mapCenter[1]},${mapCenter[0]}`,
@@ -31,11 +30,29 @@ const DealersMapSection = ({ dealers = [] }) => {
         .filter(Boolean)
         .join('~'),
     });
-
     return baseUrl + params.toString();
   };
 
   const handleDealerSelect = (dealer) => setSelectedDealer(dealer);
+
+  // 🧠 Lazy load карты
+  useEffect(() => {
+    const section = document.getElementById('dealers-map');
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsMapVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section id="dealers" className="pt-20 pb-0 bg-white relative">
@@ -45,18 +62,35 @@ const DealersMapSection = ({ dealers = [] }) => {
         </h2>
       </div>
 
-      <div className="relative w-full">
-        <div className="w-full h-[600px] lg:h-[700px] overflow-hidden shadow-lg">
-          <iframe
-            src={getIframeUrl()}
-            width="100%"
-            height="100%"
-            frameBorder="0"
-            allowFullScreen
-            title="Карта дилеров EXEED"
-          />
+      <div id="dealers-map" className="relative w-full">
+        {/* Карта или заглушка */}
+        <div className="w-full h-[600px] lg:h-[700px] overflow-hidden shadow-lg relative">
+          {!isMapVisible ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <img
+                src="/static/images/map-preview.webp"
+                alt="Карта дилеров"
+                className="w-full h-full object-cover opacity-80"
+                loading="lazy"
+              />
+              <span className="absolute text-gray-600 font-semibold bg-white/70 px-4 py-2 rounded-lg shadow-md">
+                Загрузка карты...
+              </span>
+            </div>
+          ) : (
+            <iframe
+              src={getIframeUrl()}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allowFullScreen
+              title="Карта дилеров EXEED"
+              loading="lazy"
+            />
+          )}
         </div>
 
+        {/* Карточки дилеров для ПК */}
         <div className="hidden lg:flex absolute top-16 left-0 right-0 z-10 justify-between px-12">
           {dealers.slice(0, 2).map((dealer) => (
             <div
@@ -98,6 +132,7 @@ const DealersMapSection = ({ dealers = [] }) => {
         </div>
       </div>
 
+      {/* Карточки дилеров для мобилы */}
       <div className="lg:hidden mt-8 px-4 pb-20">
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2">
           {dealers.map((dealer) => (

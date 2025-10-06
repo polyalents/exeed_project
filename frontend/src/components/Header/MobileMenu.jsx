@@ -1,11 +1,6 @@
 import React from 'react';
 
-const MobileMenu = ({ isOpen, onClose, onNavigate }) => {
-  const handleNavClick = (path) => {
-    onNavigate(path);
-    onClose();
-  };
-
+const MobileMenu = ({ isOpen, onClose }) => {
   return (
     <div
       className={`xl:hidden transition-[max-height,opacity] duration-300 ease-in-out ${
@@ -15,67 +10,73 @@ const MobileMenu = ({ isOpen, onClose, onNavigate }) => {
       <nav className="px-8 sm:px-12 py-6 space-y-1 text-center">
 
         {/* МОДЕЛИ EXEED */}
-        <button
-          onClick={() => handleNavClick('/exeed-models')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#exeed-models"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           МОДЕЛИ EXEED
-        </button>
+        </a>
         <div className="flex items-center justify-center">
           <div className="w-3/4 h-[1px] min-h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* МОДЕЛИ EXLANTIX */}
-        <button
-          onClick={() => handleNavClick('/exlantix-models')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#exlantix-models"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           МОДЕЛИ EXLANTIX
-        </button>
+        </a>
         <div className="flex items-center justify-center">
           <div className="w-3/4 h-[1px] min-h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* ТЕСТ-ДРАЙВ */}
-        <button
-          onClick={() => handleNavClick('/test-drive')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#test-drive"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           ТЕСТ-ДРАЙВ
-        </button>
+        </a>
         <div className="flex items-center justify-center">
           <div className="w-3/4 h-[1px] min-h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* КРЕДИТ */}
-        <button
-          onClick={() => handleNavClick('/credit')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#credit"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           КРЕДИТ
-        </button>
+        </a>
         <div className="flex items-center justify-center">
           <div className="w-3/4 h-[1px] min-h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* TRADE-IN */}
-        <button
-          onClick={() => handleNavClick('/trade-in')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#trade-in"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           TRADE-IN
-        </button>
+        </a>
         <div className="flex items-center justify-center">
           <div className="w-3/4 h-[1px] min-h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
         </div>
 
         {/* ДИЛЕРЫ */}
-        <button
-          onClick={() => handleNavClick('/dealers')}
-          className="block w-full text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
+        <a
+          href="#dealers"
+          onClick={onClose}
+          className="block text-white text-base font-medium py-3 hover:text-orange-400 transition-all"
         >
           ДИЛЕРЫ
-        </button>
+        </a>
 
         {/* Контакты */}
         <div className="pt-8 mt-6 border-t border-gray-600 space-y-4 text-gray-300 text-sm">

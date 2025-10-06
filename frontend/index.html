@@ -2,10 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
     <title>EXEED & EXLANTIX — официальные дилеры в Ростове-на-Дону</title>
 
-    <!-- SEO -->
+    <!-- ✅ SEO -->
     <meta
       name="description"
       content="Официальные дилеры EXEED и EXLANTIX в Ростовской области. Продажа, тест-драйв, кредит, Trade-In. Легендарные автомобили премиум-класса."
@@ -21,9 +24,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
     <meta name="theme-color" content="#000000" />
 
-    <!-- Open Graph -->
+    <!-- ✅ Open Graph -->
     <meta property="og:locale" content="ru_RU" />
-    <meta property="og:title" content="EXEED & EXLANTIX — дилеры в Ростове" />
+    <meta
+      property="og:title"
+      content="EXEED & EXLANTIX — дилеры в Ростове-на-Дону"
+    />
     <meta
       property="og:description"
       content="Официальные дилеры EXEED и EXLANTIX. Продажа, кредит, Trade-In, тест-драйв. Только премиум автомобили."
@@ -32,7 +38,7 @@
     <meta property="og:url" content="https://sokolmotors.ru/" />
     <meta property="og:type" content="website" />
 
-    <!-- Twitter Card -->
+    <!-- ✅ Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="EXEED & EXLANTIX" />
     <meta
@@ -41,24 +47,73 @@
     />
     <meta name="twitter:image" content="/static/images/preview.jpg" />
 
-    <!-- CSP -->
+    <!-- ✅ Cache & Performance -->
+    <meta
+      http-equiv="Cache-Control"
+      content="max-age=31536000, must-revalidate"
+    />
+    <meta http-equiv="Expires" content="31536000" />
+    <meta http-equiv="Pragma" content="cache" />
+
+    <!-- ✅ CSP -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com;"
+      content="
+        default-src 'self' https://api-maps.yandex.ru;
+        frame-src 'self' https://yandex.ru https://www.google.com https://www.gstatic.com;
+        font-src 'self' data: https://fonts.gstatic.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        img-src 'self' data: https://mc.yandex.ru https://vk.com https://www.googletagmanager.com https://api-maps.yandex.ru https://yandex.ru;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval'
+          https://api-maps.yandex.ru
+          https://www.googletagmanager.com
+          https://mc.yandex.ru
+          https://vk.com
+          https://www.google.com/recaptcha/
+          https://www.gstatic.com/recaptcha/;
+      "
     />
 
-    <!-- Fonts -->
+    <!-- ✅ Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- ✅ Preload critical images -->
+    <link rel="preload" as="image" href="/static/images/hero/exeedlx.webp" />
+    <link rel="preload" as="image" href="/static/images/hero/exlantix-et.webp" />
+    <link rel="preload" as="image" href="/static/images/hero/exlantix-es.webp" />
+
+    <!-- ✅ Preconnect backend -->
+    <link rel="preconnect" href="https://test-sokol.ru" crossorigin />
+
+    <!-- ✅ Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AutoDealer",
+        "name": "EXEED & EXLANTIX — официальные дилеры в Ростове-на-Дону",
+        "image": "https://sokolmotors.ru/static/images/preview.jpg",
+        "url": "https://sokolmotors.ru",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ул. Пойменная, 1г",
+          "addressLocality": "Ростов-на-Дону",
+          "addressCountry": "RU"
+        },
+        "telephone": "+7 (863) 320-33-54",
+        "openingHours": "Mo-Su 09:00-20:00"
+      }
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
 
-    <!-- Noscript Метрики -->
+    <!-- ✅ Noscript Метрики -->
     <noscript>
       <!-- Yandex.Metrica -->
       <div>
@@ -86,7 +141,7 @@
       />
     </noscript>
 
-    <!-- React -->
+    <!-- ✅ React entry -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

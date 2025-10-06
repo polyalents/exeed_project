@@ -75,33 +75,41 @@ const Header = () => {
 
   // Функция навигации с плавным скроллом
   const handleNavigation = (path) => {
-    const cleanPath = path.replace('/', '');
-    const homeSections = ['exeed-models', 'exlantix-models'];
+    const section = path.replace("/", "");
 
-    // если это одна из секций лендинга
-    if (homeSections.includes(cleanPath)) {
-      // обновляем URL без перерендера (React Router v6)
-      window.history.pushState({}, '', path);
+    // 🔹 все секции на главной странице
+    const homeSections = [
+      "exeed-models", "exlantix-models", "exeed-lx", "exeed-txl",
+      "exeed-rx", "exeed-vx", "exlantix-et", "exlantix-es",
+      "credit", "test-drive", "trade-in", "dealers"
+    ];
 
-      // находим нужный блок
-      const el = document.getElementById(cleanPath);
+    const onHomePage = location.pathname === "/";
+
+    // Если мы не на главной странице — возвращаемся туда и ждём рендер
+    if (!onHomePage && homeSections.includes(section)) {
+      navigate("/"); 
+      setTimeout(() => {
+        const el = document.getElementById(section);
+        if (el) {
+          const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({ top: offset, behavior: "smooth" });
+        }
+      }, 400);
+      return;
+    }
+
+    // Если мы уже на главной — просто скроллим
+    if (homeSections.includes(section)) {
+      const el = document.getElementById(section);
       if (el) {
         const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
-        window.scrollTo({ top: offset, behavior: 'smooth' });
-      } else {
-        // если секция ещё не в DOM, ждём
-        setTimeout(() => {
-          const retry = document.getElementById(cleanPath);
-          if (retry) {
-            const offset = retry.getBoundingClientRect().top + window.pageYOffset - 80;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-          }
-        }, 300);
+        window.scrollTo({ top: offset, behavior: "smooth" });
       }
       return;
     }
 
-    // для остальных ссылок — обычный navigate
+    // Всё остальное — обычная навигация
     navigate(path);
   };
 

@@ -55,7 +55,7 @@ const HeroSection = () => {
       image: '/static/images/hero/exlantix-es.webp',
       alt: 'EXLANTIX ES',
       subtitle: 'Электрический седан будущего',
-      warranty: '8 лет или 200 000 км',
+      warranty: '7 лет или 200 000 км',
       benefit1: '300 000 ₽ выгода на EXLANTIX',
       benefit2: null,
     },
@@ -117,7 +117,7 @@ const HeroSection = () => {
                 index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
-              <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" />
+              <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#3e4651]/40 to-[#1a1a1a]/60" />
             </div>
           ))}
