@@ -76,6 +76,22 @@ const resetAndRefresh = () => {
     }
   }, [scrollTo]);
 
+  // 2. Скролл при прямом вводе URL в адресную строку (после загрузки данных)
+  useEffect(() => {
+    if (!loading && scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(scrollTo);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 600); // БЫЛО 300, СТАЛО 600
+      return () => clearTimeout(timer);
+    }
+  }, [loading, scrollTo]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -475,20 +491,19 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       <HeroSection />
 
       {/* EXEED Models Section */}
-      <section id="exeed-models" className="py-12 lg:py-20 bg-white">
+      <section id="exeed-models" className="pt-12 lg:pt-20 pb-8 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Заголовок секции */}
           <div className="text-center mb-12 lg:mb-16">
             <div className="flex items-center justify-center space-x-2 lg:space-x-4 mb-6">
               <div className="w-8 lg:w-12 h-1 bg-orange-500"></div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading font-bold text-black px-2 text-center leading-tight">
-                ЛЕГЕНДАРНЫЕ С 2010 ГОДА
+                ЛЕГЕНДАРНЫЕ С 2018 ГОДА
               </h2>
               <div className="w-8 lg:w-12 h-1 bg-orange-500"></div>
             </div>
             <p className="text-base lg:text-xl text-gray-700 max-w-4xl mx-auto px-4">
-              Присоединитесь к нам, чтобы отметить самое знаковое имя в истории китайских автомобилей EXEED. 
-              От первой модели в 2018 году до современной линейки, включающей высокотехнологичные кроссоверы.
+              EXEED – бренд премиальных автомобилей, созданных международной командой профессионалов. Создавая кроссоверы и внедорожники EXEED, мы стремимся поделиться с клиентом страстью к любимому делу, выражая ее через высочайшие технологии и безупречный дизайн.
             </p>
           </div>
           
@@ -514,7 +529,7 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       </section>
 
       {/* EXLANTIX Models Section */}
-      <section id="exlantix-models" className="pt-12 lg:pt-20 pb-0 bg-gray-50">
+      <section id="exlantix-models" className="-mt-8 pt-12 lg:pt-20 pb-0 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Заголовок секции */}
           <div className="text-center mb-12 lg:mb-16">

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import os
 import requests
@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="frontend/dist", static_url_path="/")
 
-# 🔥 Настройка CORS
+# --- CORS ---
 CORS(
     app,
     resources={r"/api/*": {"origins": "*"}},
@@ -18,7 +18,6 @@ CORS(
     max_age=3600
 )
 
-# Добавляем заголовки ко всем ответам
 @app.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
@@ -27,7 +26,6 @@ def after_request(response):
     response.headers["Access-Control-Max-Age"] = "3600"
     return response
 
-# Обработка preflight (OPTIONS)
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
@@ -38,11 +36,11 @@ def handle_preflight():
         response.headers["Access-Control-Max-Age"] = "3600"
         return response
 
-# Конфиг
+# --- Конфиг ---
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
 
-# --- Эндпоинты ---
-@app.route("/api/health", methods=["GET", "OPTIONS"])
+# --- API ---
+@app.route("/api/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "ok", "message": "EXEED API is running"})
 
@@ -66,6 +64,7 @@ def get_dealers():
     ]
     return jsonify(dealers)
 
+
 @app.route("/api/test-drive", methods=["POST"])
 def submit_test_drive():
     try:
@@ -74,7 +73,6 @@ def submit_test_drive():
         for f in required:
             if not data.get(f):
                 return jsonify({"error": f"Поле {f} обязательно"}), 400
-
         print("Заявка на тест-драйв:", data)
         return jsonify({"message": "Заявка успешно отправлена", "id": 1}), 201
     except Exception as e:
@@ -89,7 +87,6 @@ def submit_credit():
         for f in required:
             if not data.get(f):
                 return jsonify({"error": f"Поле {f} обязательно"}), 400
-
         print("Заявка на кредит:", data)
         return jsonify({"message": "Заявка успешно отправлена", "id": 1}), 201
     except Exception as e:
@@ -104,19 +101,16 @@ def submit_callback():
         for f in required:
             if not data.get(f):
                 return jsonify({"error": f"Поле {f} обязательно"}), 400
-
         if not data.get("dataConsent"):
             return jsonify({"error": "Необходимо согласие на обработку данных"}), 400
         if not data.get("communicationConsent"):
             return jsonify({"error": "Необходимо согласие на коммуникацию"}), 400
-
         print("Заявка на звонок:", data)
         return jsonify({"message": "Заявка успешно отправлена", "id": 1}), 201
     except Exception as e:
         print("Ошибка:", e)
         return jsonify({"error": "Внутренняя ошибка сервера"}), 500
 
-# --- Проверка reCAPTCHA ---
 @app.route("/api/verify-recaptcha", methods=["POST"])
 def verify_recaptcha():
     try:
@@ -148,6 +142,28 @@ def verify_recaptcha():
         print("Ошибка при проверке reCAPTCHA:", e)
         return jsonify({"success": False, "message": "Ошибка на сервере"}), 500
 
+
+# --- Роуты для React Router ---
+@app.route("/exeed-models")
+@app.route("/exlantix-models")
+@app.route("/credit")
+@app.route("/trade-in")
+@app.route("/dealers")
+@app.route("/test-drive")
+def react_routes():
+    """Отдаём index.html для всех маршрутов фронта"""
+    return send_from_directory(app.static_folder, "index.html")
+
+
+# --- SPA fallback ---
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_frontend(path):
+    if path.startswith("api/"):
+        return jsonify({"error": "Эндпоинт не найден"}), 404
+    return send_from_directory(app.static_folder, "index.html")
+
+
 # --- Ошибки ---
 @app.errorhandler(404)
 def not_found(error):
@@ -157,6 +173,7 @@ def not_found(error):
 def internal_error(error):
     return jsonify({"error": "Внутренняя ошибка сервера"}), 500
 
+
 if __name__ == "__main__":
-    print("🚀 Starting EXEED API server with CORS enabled + reCAPTCHA verification")
+    print("🚀 Starting EXEED API server with CORS + SPA fallback + React Router routes")
     app.run(debug=True, host="0.0.0.0", port=5002)

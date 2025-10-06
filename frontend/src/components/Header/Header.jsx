@@ -1,6 +1,6 @@
 // src/components/Header/Header.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MobileMenu from './MobileMenu';
 import { useModal } from '../../context/ModalContext';
 
@@ -9,6 +9,8 @@ const Header = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [screenSize, setScreenSize] = useState('desktop');
   const { openModal } = useModal();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Отслеживание размера экрана для адаптации
   useEffect(() => {
@@ -40,25 +42,67 @@ const Header = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Эффект для скролла при изменении URL
+  useEffect(() => {
+    const pathname = location.pathname.replace('/', '');
+    
+    // Список секций, которые находятся на главной странице
+    const homePageSections = ['exeed-models', 'exlantix-models'];
+    
+    if (pathname && homePageSections.includes(pathname)) {
+      // Если это секция на главной странице - скроллим к ней
+      setTimeout(() => {
+        const element = document.getElementById(pathname);
+        if (element) {
+          const headerHeight = 80;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerHeight;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else if (pathname === '') {
+      // Если путь пустой - скроллим наверх
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.pathname]);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Плавная прокрутка к элементу + обновление URL
-  const scrollToSection = (sectionId) => {
-    // Обновляем URL с хэшем
-    window.history.pushState(null, null, `#${sectionId}`);
-    
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerHeight = 80;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - headerHeight;
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+  // Функция навигации с плавным скроллом
+  const handleNavigation = (path) => {
+    const cleanPath = path.replace('/', '');
+    const homeSections = ['exeed-models', 'exlantix-models'];
+
+    // если это одна из секций лендинга
+    if (homeSections.includes(cleanPath)) {
+      // обновляем URL без перерендера (React Router v6)
+      window.history.pushState({}, '', path);
+
+      // находим нужный блок
+      const el = document.getElementById(cleanPath);
+      if (el) {
+        const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      } else {
+        // если секция ещё не в DOM, ждём
+        setTimeout(() => {
+          const retry = document.getElementById(cleanPath);
+          if (retry) {
+            const offset = retry.getBoundingClientRect().top + window.pageYOffset - 80;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+          }
+        }, 300);
+      }
+      return;
     }
+
+    // для остальных ссылок — обычный navigate
+    navigate(path);
   };
 
   // Управление выпадающими меню
@@ -72,8 +116,8 @@ const Header = () => {
     setActiveDropdown(null);
   };
 
-  const handleItemClick = (sectionId) => {
-    scrollToSection(sectionId);
+  const handleItemClick = (path) => {
+    handleNavigation(path);
     setActiveDropdown(null);
   };
 
@@ -113,12 +157,10 @@ const Header = () => {
     return screenSize === 'desktop-sm';
   };
 
-  // Новая функция для лаптопов 1280-1460px
   const shouldShowLaptopMenu = () => {
     return screenSize === 'laptop-md';
   };
 
-  // Мобильное меню теперь только для размеров < 1280px
   const shouldShowMobileMenu = () => {
     return ['mobile', 'tablet-sm', 'tablet', 'tablet-vert', 'laptop-sm'].includes(screenSize);
   };
@@ -127,10 +169,10 @@ const Header = () => {
     switch (screenSize) {
       case 'laptop-md':
       case 'desktop-sm':
-        return 'text-xs'; // 12px (равно меню)
+        return 'text-xs';
       case 'desktop':
       case 'desktop-xl':
-        return 'text-sm'; // 14px (равно меню)
+        return 'text-sm';
       default:
         return 'text-xs';
     }
@@ -144,20 +186,16 @@ const Header = () => {
             
             {/* Лого */}
             <div className="flex-shrink-0">
-              <a 
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.history.pushState(null, null, window.location.pathname);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+              <button 
+                onClick={() => handleNavigation('/')}
+                className="cursor-pointer"
               >
                 <img 
                   src="/static/images/logos/logo.webp" 
                   alt="EXEED & EXLANTIX" 
-                  className="h-3 md:h-1.3 w-auto object-contain cursor-pointer transition-all duration-200"
+                  className="h-3 md:h-1.3 w-auto object-contain transition-all duration-200"
                 />
-              </a>
+              </button>
             </div>
 
             {/* Полное десктопное меню для 1690+ */}
@@ -169,12 +207,8 @@ const Header = () => {
                   onMouseEnter={() => handleDropdownEnter('exeed')}
                   onMouseLeave={handleDropdownLeave}
                 >
-                  <a
-                    href="#exeed-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exeed-models');
-                    }}
+                  <button
+                    onClick={() => handleNavigation('/exeed-models')}
                     className="text-white text-sm hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
                   >
                     <span>МОДЕЛИ EXEED</span>
@@ -185,62 +219,46 @@ const Header = () => {
                     >
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                  </a>
+                  </button>
                   
                   <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
                     activeDropdown === 'exeed' 
                       ? 'opacity-100 visible translate-y-0' 
                       : 'opacity-0 invisible -translate-y-2'
                   }`}>
-                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-3 min-w-[240px] max-w-[300px]">
+                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-2 min-w-[250px] max-w-[300px]">
                       <div className="space-y-1">
-                        <a
-                          href="#exeed-lx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-lx');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exeed-lx')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXEED LX</span>
-                          <div className="text-xs text-gray-300 mt-1">Компактный премиальный кроссовер</div>
-                        </a>
+                          <span className="text-sm">EXEED LX</span>
+                          <div className="text-xs text-gray-300 mt-1">Элегантный городской кроссовер</div>
+                        </button>
                         
-                        <a
-                          href="#exeed-txl"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-txl');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exeed-txl')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXEED TXL</span>
-                          <div className="text-xs text-gray-300 mt-1">Среднеразмерный внедорожник</div>
-                        </a>
+                          <span className="text-sm">EXEED TXL</span>
+                          <div className="text-xs text-gray-300 mt-1">Стильный семейный SUV</div>
+                        </button>
                         
-                        <a
-                          href="#exeed-rx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-rx');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exeed-rx')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXEED RX</span>
-                          <div className="text-xs text-gray-300 mt-1">Новое поколение премиум класса</div>
-                        </a>
+                          <span className="text-sm">EXEED RX</span>
+                          <div className="text-xs text-gray-300 mt-1">Мощный и современный кроссовер</div>
+                        </button>
                         
-                        <a
-                          href="#exeed-vx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-vx');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exeed-vx')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXEED VX</span>
-                          <div className="text-xs text-gray-300 mt-1">Полноразмерный внедорожник</div>
-                        </a>
+                          <span className="text-sm">EXEED VX</span>
+                          <div className="text-xs text-gray-300 mt-1">Полноразмерный кроссовер</div>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -252,12 +270,8 @@ const Header = () => {
                   onMouseEnter={() => handleDropdownEnter('exlantix')}
                   onMouseLeave={handleDropdownLeave}
                 >
-                  <a
-                    href="#exlantix-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exlantix-models');
-                    }}
+                  <button
+                    onClick={() => handleNavigation('/exlantix-models')}
                     className="text-white text-sm hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
                   >
                     <span>МОДЕЛИ EXLANTIX</span>
@@ -268,87 +282,63 @@ const Header = () => {
                     >
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                  </a>
+                  </button>
                   
                   <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
                     activeDropdown === 'exlantix' 
                       ? 'opacity-100 visible translate-y-0' 
                       : 'opacity-0 invisible -translate-y-2'
                   }`}>
-                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-3 min-w-[240px] max-w-[300px]">
+                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-2 min-w-[250px] max-w-[300px]">
                       <div className="space-y-1">
-                        <a
-                          href="#exlantix-es"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-es');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exlantix-es')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXLANTIX ES</span>
-                          <div className="text-xs text-gray-300 mt-1">Гибридное четырехдверное купе</div>
-                        </a>
+                          <span className="text-sm">EXLANTIX ES</span>
+                          <div className="text-xs text-gray-300 mt-1">Электрический седан премиум-класса</div>
+                        </button>
                         
-                        <a
-                          href="#exlantix-et"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-et');
-                          }}
-                          className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                        <button
+                          onClick={() => handleItemClick('/exlantix-et')}
+                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
-                          <span>EXLANTIX ET</span>
-                          <div className="text-xs text-gray-300 mt-1">Полноразмерный кроссовер</div>
-                        </a>
+                          <span className="text-sm">EXLANTIX ET</span>
+                          <div className="text-xs text-gray-300 mt-1">Электрический кроссовер будущего</div>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Простые ссылки */}
-                <a
-                  href="#test-drive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('test-drive');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/test-drive')}
                   className="text-white text-sm hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   ТЕСТ-ДРАЙВ
-                </a>
+                </button>
                 
-                <a
-                  href="#credit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('credit');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/credit')}
                   className="text-white text-sm hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   КРЕДИТ
-                </a>
+                </button>
                 
-                <a
-                  href="#trade-in"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('trade-in');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/trade-in')}
                   className="text-white text-sm hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   TRADE-IN
-                </a>
+                </button>
 
-                <a
-                  href="#dealers"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('dealers');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/dealers')}
                   className="text-white text-sm hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   ДИЛЕРЫ
-                </a>
+                </button>
               </nav>
             )}
 
@@ -361,12 +351,8 @@ const Header = () => {
                   onMouseEnter={() => handleDropdownEnter('exeed')}
                   onMouseLeave={handleDropdownLeave}
                 >
-                  <a
-                    href="#exeed-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exeed-models');
-                    }}
+                  <button
+                    onClick={() => handleNavigation('/exeed-models')}
                     className="text-white text-xs hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
                   >
                     <span>МОДЕЛИ EXEED</span>
@@ -377,62 +363,42 @@ const Header = () => {
                     >
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                  </a>
+                  </button>
                   
                   <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
                     activeDropdown === 'exeed' 
                       ? 'opacity-100 visible translate-y-0' 
                       : 'opacity-0 invisible -translate-y-2'
                   }`}>
-                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-3 min-w-[220px] max-w-[280px]">
+                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-2 min-w-[200px] max-w-[250px]">
                       <div className="space-y-1">
-                        <a
-                          href="#exeed-lx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-lx');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exeed-lx')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXEED LX</span>
-                          <div className="text-xs text-gray-300 mt-1">Компактный премиальный кроссовер</div>
-                        </a>
+                        </button>
                         
-                        <a
-                          href="#exeed-txl"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-txl');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exeed-txl')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXEED TXL</span>
-                          <div className="text-xs text-gray-300 mt-1">Среднеразмерный внедорожник</div>
-                        </a>
+                        </button>
                         
-                        <a
-                          href="#exeed-rx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-rx');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exeed-rx')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXEED RX</span>
-                          <div className="text-xs text-gray-300 mt-1">Новое поколение премиум класса</div>
-                        </a>
+                        </button>
                         
-                        <a
-                          href="#exeed-vx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-vx');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exeed-vx')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXEED VX</span>
-                          <div className="text-xs text-gray-300 mt-1">Полноразмерный внедорожник</div>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -444,12 +410,8 @@ const Header = () => {
                   onMouseEnter={() => handleDropdownEnter('exlantix')}
                   onMouseLeave={handleDropdownLeave}
                 >
-                  <a
-                    href="#exlantix-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exlantix-models');
-                    }}
+                  <button
+                    onClick={() => handleNavigation('/exlantix-models')}
                     className="text-white text-xs hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
                   >
                     <span>МОДЕЛИ EXLANTIX</span>
@@ -460,195 +422,7 @@ const Header = () => {
                     >
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                  </a>
-                  
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
-                    activeDropdown === 'exlantix' 
-                      ? 'opacity-100 visible translate-y-0' 
-                      : 'opacity-0 invisible -translate-y-2'
-                  }`}>
-                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-3 min-w-[220px] max-w-[280px]">
-                      <div className="space-y-1">
-                        <a
-                          href="#exlantix-es"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-es');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXLANTIX ES</span>
-                          <div className="text-xs text-gray-300 mt-1">Гибридное четырехдверное купе</div>
-                        </a>
-                        
-                        <a
-                          href="#exlantix-et"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-et');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXLANTIX ET</span>
-                          <div className="text-xs text-gray-300 mt-1">Технологическая платформа будущего</div>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Простые ссылки */}
-                <a
-                  href="#test-drive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('test-drive');
-                  }}
-                  className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
-                >
-                  ТЕСТ-ДРАЙВ
-                </a>
-                
-                <a
-                  href="#credit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('credit');
-                  }}
-                  className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
-                >
-                  КРЕДИТ
-                </a>
-                
-                <a
-                  href="#trade-in"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('trade-in');
-                  }}
-                  className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
-                >
-                  TRADE-IN
-                </a>
-
-                <a
-                  href="#dealers"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('dealers');
-                  }}
-                  className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
-                >
-                  ДИЛЕРЫ
-                </a>
-              </nav>
-            )}
-
-            {/* Новое лаптопное меню для 1280-1460px */}
-            {shouldShowLaptopMenu() && (
-              <nav className="flex flex-row items-center space-x-3 ml-6">
-                {/* Выпадающее меню EXEED */}
-                <div 
-                  className="relative"
-                  onMouseEnter={() => handleDropdownEnter('exeed')}
-                  onMouseLeave={handleDropdownLeave}
-                >
-                  <a
-                    href="#exeed-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exeed-models');
-                    }}
-                    className="text-white text-xs hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
-                  >
-                    <span>EXEED</span>
-                    <svg 
-                      className={`w-3 h-3 transition-transform duration-200 ${activeDropdown === 'exeed' ? 'rotate-180' : ''}`} 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </a>
-                  
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
-                    activeDropdown === 'exeed' 
-                      ? 'opacity-100 visible translate-y-0' 
-                      : 'opacity-0 invisible -translate-y-2'
-                  }`}>
-                    <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-2 min-w-[200px] max-w-[250px]">
-                      <div className="space-y-1">
-                        <a
-                          href="#exeed-lx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-lx');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXEED LX</span>
-                        </a>
-                        
-                        <a
-                          href="#exeed-txl"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-txl');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXEED TXL</span>
-                        </a>
-                        
-                        <a
-                          href="#exeed-rx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-rx');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXEED RX</span>
-                        </a>
-                        
-                        <a
-                          href="#exeed-vx"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exeed-vx');
-                          }}
-                          className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-                        >
-                          <span className="text-xs">EXEED VX</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Выпадающее меню EXLANTIX */}
-                <div 
-                  className="relative"
-                  onMouseEnter={() => handleDropdownEnter('exlantix')}
-                  onMouseLeave={handleDropdownLeave}
-                >
-                  <a
-                    href="#exlantix-models"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection('exlantix-models');
-                    }}
-                    className="text-white text-xs hover:text-orange-400 transition-colors font-medium cursor-pointer py-2 flex items-center space-x-1 whitespace-nowrap"
-                  >
-                    <span>EXLANTIX</span>
-                    <svg 
-                      className={`w-3 h-3 transition-transform duration-200 ${activeDropdown === 'exlantix' ? 'rotate-180' : ''}`} 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </a>
+                  </button>
                   
                   <div className={`absolute left-1/2 transform -translate-x-1/2 top-full mt-2 transition-all duration-300 ease-out z-50 ${
                     activeDropdown === 'exlantix' 
@@ -657,76 +431,52 @@ const Header = () => {
                   }`}>
                     <div className="bg-black/70 backdrop-blur-md rounded-lg shadow-2xl p-2 min-w-[200px] max-w-[250px]">
                       <div className="space-y-1">
-                        <a
-                          href="#exlantix-es"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-es');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exlantix-es')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXLANTIX ES</span>
-                        </a>
+                        </button>
                         
-                        <a
-                          href="#exlantix-et"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleItemClick('exlantix-et');
-                          }}
+                        <button
+                          onClick={() => handleItemClick('/exlantix-et')}
                           className="block w-full px-3 py-2 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span className="text-xs">EXLANTIX ET</span>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Простые ссылки - сокращенные */}
-                <a
-                  href="#test-drive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('test-drive');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/test-drive')}
                   className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   ТЕСТ-ДРАЙВ
-                </a>
+                </button>
                 
-                <a
-                  href="#credit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('credit');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/credit')}
                   className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   КРЕДИТ
-                </a>
+                </button>
                 
-                <a
-                  href="#trade-in"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('trade-in');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/trade-in')}
                   className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   TRADE-IN
-                </a>
+                </button>
 
-                <a
-                  href="#dealers"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('dealers');
-                  }}
+                <button
+                  onClick={() => handleNavigation('/dealers')}
                   className="text-white text-xs hover:text-orange-400 transition-colors font-medium py-2 whitespace-nowrap"
                 >
                   ДИЛЕРЫ
-                </a>
+                </button>
               </nav>
             )}
 
@@ -775,20 +525,19 @@ const Header = () => {
                   <span className="font-semibold text-white whitespace-nowrap">+7 863 320-33-54</span>
                 </a>
 
-<button
-  onClick={() => openModal('callback')}
-  className={`bg-exeed-gray hover:bg-white text-exeed-dark rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.03] whitespace-nowrap
-    ${
-      screenSize === 'laptop-md' || screenSize === 'desktop-sm'
-        ? 'px-3 py-1.5 text-tiny'   // 12px
-        : screenSize === 'desktop' || screenSize === 'desktop-xl'
-        ? 'px-4 py-2 text-sm'      // 14px
-        : 'px-2.5 py-1 text-xxs'   // 11px для резервных случаев
-    }`}
->
-  Обратный звонок
-</button>
-
+                <button
+                  onClick={() => openModal('callback')}
+                  className={`bg-exeed-gray hover:bg-white text-exeed-dark rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.03] whitespace-nowrap
+                    ${
+                      screenSize === 'laptop-md' || screenSize === 'desktop-sm'
+                        ? 'px-3 py-1.5 text-tiny'
+                        : screenSize === 'desktop' || screenSize === 'desktop-xl'
+                        ? 'px-4 py-2 text-sm'
+                        : 'px-2.5 py-1 text-xxs'
+                    }`}
+                >
+                  Обратный звонок
+                </button>
               </div>
             )}
 
@@ -825,7 +574,7 @@ const Header = () => {
         </div>
 
         {/* Мобильное меню */}
-        <MobileMenu isOpen={isMenuOpen} onClose={closeMenu} />
+        <MobileMenu isOpen={isMenuOpen} onClose={closeMenu} onNavigate={handleNavigation} />
       </header>
 
       {/* Overlay для мобильного меню */}
