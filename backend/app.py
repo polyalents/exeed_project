@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,12 +49,12 @@ def health_check():
 @app.route("/api/models", methods=["GET"])
 def get_models():
     models = [
-        {"id": 1, "name": "EXEED LX", "brand": "EXEED", "price": "от 2 690 000 ₽", "image": "/static/images/models/exeedlx.webp"},
-        {"id": 2, "name": "EXEED TXL", "brand": "EXEED", "price": "от 3 250 000 ₽", "image": "/static/images/models/exeedtxl.webp"},
-        {"id": 3, "name": "EXEED RX", "brand": "EXEED", "price": "от 3 990 000 ₽", "image": "/static/images/models/rx.webp"},
-        {"id": 4, "name": "EXEED VX", "brand": "EXEED", "price": "от 4 490 000 ₽", "image": "/static/images/models/vx.webp"},
-        {"id": 5, "name": "EXLANTIX ET", "brand": "EXLANTIX", "price": "от 6 600 000 ₽", "image": "/static/images/models/exlantix-et.webp"},
-        {"id": 6, "name": "EXLANTIX ES", "brand": "EXLANTIX", "price": "от 5 990 000 ₽", "image": "/static/images/models/exlantix-es.webp"}
+        {"id": 1, "name": "EXEED LX FL", "brand": "EXEED", "price": "от 2 175 000 ₽", "old_price": "2 790 000 ₽", "image": "/static/images/models/exeedlx.webp"},
+        {"id": 2, "name": "EXEED TXL FL", "brand": "EXEED", "price": "от 2 950 000 ₽", "old_price": "3 600 000 ₽", "image": "/static/images/models/exeedtxl.webp"},
+        {"id": 3, "name": "EXEED RX", "brand": "EXEED", "price": "от 3 650 000 ₽", "old_price": "4 550 000 ₽", "image": "/static/images/models/rx.webp"},
+        {"id": 4, "name": "EXEED VX FL", "brand": "EXEED", "price": "от 4 565 000 ₽", "old_price": "6 040 000 ₽", "image": "/static/images/models/vx.webp"},
+        {"id": 5, "name": "EXLANTIX ET", "brand": "EXLANTIX", "price": "от 6 300 000 ₽", "old_price": "6 600 000 ₽", "image": "/static/images/models/exlantix-et.webp"},
+        {"id": 6, "name": "EXLANTIX ES", "brand": "EXLANTIX", "price": "от 5 690 000 ₽", "old_price": "5 990 000 ₽", "image": "/static/images/models/exlantix-es.webp"}
     ]
     return jsonify(models)
 
@@ -115,6 +116,38 @@ def submit_callback():
         print("Ошибка:", e)
         return jsonify({"error": "Внутренняя ошибка сервера"}), 500
 
+# --- Проверка reCAPTCHA ---
+@app.route("/api/verify-recaptcha", methods=["POST"])
+def verify_recaptcha():
+    try:
+        data = request.get_json()
+        token = data.get("token")
+
+        if not token:
+            return jsonify({"success": False, "message": "Отсутствует токен reCAPTCHA"}), 400
+
+        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
+        if not secret_key:
+            return jsonify({"success": False, "message": "Секретный ключ reCAPTCHA не найден на сервере"}), 500
+
+        verify_url = "https://www.google.com/recaptcha/api/siteverify"
+        payload = {"secret": secret_key, "response": token}
+        response = requests.post(verify_url, data=payload)
+        result = response.json()
+
+        if not result.get("success"):
+            return jsonify({
+                "success": False,
+                "message": "Проверка reCAPTCHA не пройдена",
+                "error-codes": result.get("error-codes", [])
+            }), 400
+
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        print("Ошибка при проверке reCAPTCHA:", e)
+        return jsonify({"success": False, "message": "Ошибка на сервере"}), 500
+
 # --- Ошибки ---
 @app.errorhandler(404)
 def not_found(error):
@@ -125,5 +158,5 @@ def internal_error(error):
     return jsonify({"error": "Внутренняя ошибка сервера"}), 500
 
 if __name__ == "__main__":
-    print("🚀 Starting EXEED API server with CORS enabled")
+    print("🚀 Starting EXEED API server with CORS enabled + reCAPTCHA verification")
     app.run(debug=True, host="0.0.0.0", port=5002)

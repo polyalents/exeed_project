@@ -298,7 +298,7 @@ const Header = () => {
                           className="block w-full px-4 py-3 text-left text-white hover:text-orange-400 hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
                         >
                           <span>EXLANTIX ET</span>
-                          <div className="text-xs text-gray-300 mt-1">Технологическая платформа будущего</div>
+                          <div className="text-xs text-gray-300 mt-1">Полноразмерный кроссовер</div>
                         </a>
                       </div>
                     </div>

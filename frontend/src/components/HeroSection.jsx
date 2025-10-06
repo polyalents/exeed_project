@@ -11,12 +11,54 @@ const HeroSection = () => {
   const { openModal } = useModal();
 
   const heroSlides = [
-    { image: '/static/images/hero/exeedlx.webp', alt: 'НОВЫЙ EXEED LX', subtitle: 'Флагманский кроссовер' },
-    { image: '/static/images/hero/exeedtxl.webp', alt: 'НОВЫЙ EXEED TXL', subtitle: 'Современный кроссовер' },
-    { image: '/static/images/hero/rx.webp', alt: 'RX', subtitle: 'Прогрессивный SUV' },
-    { image: '/static/images/hero/vx.webp', alt: 'НОВЫЙ VX', subtitle: 'Флагман премиум-класса' },
-    { image: '/static/images/hero/exlantix-et.webp', alt: 'EXLANTIX ET', subtitle: 'Электрический кроссовер' },
-    { image: '/static/images/hero/exlantix-es.webp', alt: 'EXLANTIX ES', subtitle: 'Электрический седан будущего' },
+    {
+      image: '/static/images/hero/exeedlx.webp',
+      alt: 'НОВЫЙ EXEED LX FL',
+      subtitle: 'Флагманский кроссовер',
+      warranty: '7 лет или 200 000 км',
+      benefit1: '610 000 ₽ выгода на EXEED',
+      benefit2: 'Авторассрочка от 20 000 ₽/месяц',
+    },
+    {
+      image: '/static/images/hero/exeedtxl.webp',
+      alt: 'НОВЫЙ EXEED TXL FL',
+      subtitle: 'Современный кроссовер',
+      warranty: '7 лет или 200 000 км',
+      benefit1: '650 000 ₽ выгода на EXEED',
+      benefit2: 'Ежемесячный платеж от 30 000 ₽/месяц',
+    },
+    {
+      image: '/static/images/hero/rx.webp',
+      alt: 'RX',
+      subtitle: 'Прогрессивный SUV',
+      warranty: '7 лет или 200 000 км',
+      benefit1: '900 000 ₽ выгода на EXEED',
+      benefit2: 'Ежемесячный платеж от 35 000 ₽/месяц',
+    },
+    {
+      image: '/static/images/hero/vx.webp',
+      alt: 'НОВЫЙ VX FL',
+      subtitle: 'Флагман премиум-класса',
+      warranty: '7 лет или 200 000 км',
+      benefit1: '1 475 000 ₽ выгода на EXEED',
+      benefit2: 'Ежемесячный платеж от 45 000 ₽/месяц',
+    },
+    {
+      image: '/static/images/hero/exlantix-et.webp',
+      alt: 'EXLANTIX ET',
+      subtitle: 'Электрический кроссовер',
+      warranty: '8 лет или 200 000 км',
+      benefit1: '300 000 ₽ выгода на EXLANTIX',
+      benefit2: null,
+    },
+    {
+      image: '/static/images/hero/exlantix-es.webp',
+      alt: 'EXLANTIX ES',
+      subtitle: 'Электрический седан будущего',
+      warranty: '8 лет или 200 000 км',
+      benefit1: '300 000 ₽ выгода на EXLANTIX',
+      benefit2: null,
+    },
   ];
 
   useEffect(() => {
@@ -35,7 +77,6 @@ const HeroSection = () => {
   const nextSlide = () =>
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
 
-  // Drag & Touch
   const handleDragStart = (clientX) => {
     setIsDragging(true);
     startX.current = clientX;
@@ -53,6 +94,8 @@ const HeroSection = () => {
     setIsDragging(false);
   };
 
+  const slide = heroSlides[currentSlide];
+
   return (
     <div className="relative">
       <section
@@ -65,7 +108,7 @@ const HeroSection = () => {
         onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
         onTouchEnd={handleDragEnd}
       >
-        {/* Background Slider */}
+        {/* Фон */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, index) => (
             <div
@@ -80,7 +123,7 @@ const HeroSection = () => {
           ))}
         </div>
 
-        {/* Лента — отдельно, без прилипания */}
+        {/* Лента */}
         <div
           className="absolute top-16 sm:top-20 lg:top-24 left-0 w-full z-40"
           style={{
@@ -89,33 +132,51 @@ const HeroSection = () => {
             WebkitBackdropFilter: 'blur(8px)',
           }}
         >
-          <div className="py-3 sm:py-3 md:py-4 px-4">
+          <div className="py-3 px-4">
             <p className="text-center text-white font-bold text-base md:text-lg lg:text-xl uppercase tracking-wide drop-shadow-md">
               Официальные дилеры EXEED & EXLANTIX в Ростовской области
             </p>
           </div>
         </div>
 
-        {/* Контент — смещаем НИЖЕ на ПК, оставляя слева */}
+        {/* Контент */}
         <div className="hero-content pt-[100px] md:pt-[120px] lg:pt-[18vh] xl:pt-[22vh]">
-          <h1 className="hero-title">{heroSlides[currentSlide].alt}</h1>
-          <p className="hero-description">{heroSlides[currentSlide].subtitle}</p>
+          <h1 className="hero-title">{slide.alt}</h1>
+          <p className="hero-description">{slide.subtitle}</p>
 
-          <div className="hero-benefits">
-            <p className="benefit-title">Рекордные выгоды до 30.09</p>
-            <ul className="benefits-list space-y-2">
-              <li className="before:content-['-'] before:mr-2 before:text-white">
-                <strong className="mr-1">1 475 000 ₽</strong> выгода на EXEED
-              </li>
-              <li className="before:content-['-'] before:mr-2 before:text-white">
-                <strong className="mr-1">Авторассрочка</strong> от 20 000 ₽/месяц
-              </li>
-              <li className="before:content-['-'] before:mr-2 before:text-white">
-                <strong className="mr-1">Доп. оборудование</strong> в подарок!
-              </li>
-            </ul>
-          </div>
+          {/* Рекордные выгоды */}
+          {(slide.benefit1 || slide.benefit2 || slide.warranty) && (
+            <div className="hero-benefits">
+              <p className="benefit-title">Рекордные выгоды до 30.09</p>
+<ul className="benefits-list space-y-2 text-left leading-snug">
+  {slide.benefit1 && (
+    <li className="flex items-start gap-2">
+      <span className="text-white">–</span>
+      <span><strong>{slide.benefit1}</strong></span>
+    </li>
+  )}
+  {slide.benefit2 && (
+    <li className="flex items-start gap-2">
+      <span className="text-white">–</span>
+      <span><strong>{slide.benefit2}</strong></span>
+    </li>
+  )}
+  <li className="flex items-start gap-2">
+    <span className="text-white">–</span>
+    <span><strong>Доп. оборудование</strong> в подарок!</span>
+  </li>
+  {slide.warranty && (
+    <li className="flex items-start gap-2">
+      <span className="text-white">–</span>
+      <span><strong>Гарантия</strong> {slide.warranty}</span>
+    </li>
+  )}
+</ul>
 
+            </div>
+          )}
+
+          {/* Кнопка */}
           <div className="hero-buttons">
             <button
               onClick={() => openModal('callback')}
@@ -134,28 +195,25 @@ const HeroSection = () => {
         <button
           className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center z-20"
           onClick={prevSlide}
-          aria-label="Предыдущий слайд"
         >
           ‹
         </button>
         <button
           className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center z-20"
           onClick={nextSlide}
-          aria-label="Следующий слайд"
         >
           ›
         </button>
 
         {/* Индикаторы */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {heroSlides.map((slide, index) => (
+          {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all ${
                 index === currentSlide ? 'bg-white w-6' : 'bg-white/50'
               }`}
-              aria-label={`Слайд ${index + 1}: ${slide.alt}`}
             />
           ))}
         </div>

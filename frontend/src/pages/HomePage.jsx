@@ -4,6 +4,7 @@ import HeroSection from '../components/HeroSection';
 import DealersMapSection from '../components/DealersMapSection';
 import apiService from '../services/api';
 import { useModal } from '../context/ModalContext';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const HomePage = ({ scrollTo }) => {
   const [models, setModels] = useState([]);
@@ -11,6 +12,55 @@ const HomePage = ({ scrollTo }) => {
   const [loading, setLoading] = useState(true);
   const { openModal } = useModal();
 
+  // Состояния и обработчики для формы тест-драйва
+const [formData, setFormData] = useState({ phone: "" });
+const [errors, setErrors] = useState({});
+const [captcha, setCaptcha] = useState(null);
+const [isSubmitted, setIsSubmitted] = useState(false);
+const [showSuccess, setShowSuccess] = useState(false);
+
+const validateForm = () => {
+  const newErrors = {};
+  const phoneNumbers = formData.phone.replace(/\D/g, "");
+
+  if (phoneNumbers.length !== 11) {
+    newErrors.phone = "Введите корректный номер телефона";
+  } else {
+    const firstDigitAfter7 = phoneNumbers.charAt(1);
+    if (!["8", "9"].includes(firstDigitAfter7)) {
+      newErrors.phone = "Номер должен начинаться с +7 8__ или +7 9__";
+    }
+  }
+
+  if (!captcha) newErrors.captcha = "Подтвердите, что вы не робот";
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) return;
+
+  // имитация успешной отправки (например, await apiService.sendLead(formData))
+  setShowSuccess(true);
+  setIsSubmitted(true);
+
+  // очистка ошибок и капчи
+  setErrors({});
+  setCaptcha(null);
+};
+
+const resetAndRefresh = () => {
+  setFormData({ phone: "" });
+  setCaptcha(null);
+  setErrors({});
+  setIsSubmitted(false);
+  setShowSuccess(false);
+};
+
+  // ВСТАВИТЬ ЭТОТ БЛОК ЗДЕСЬ:
   useEffect(() => {
     if (scrollTo) {
       const timer = setTimeout(() => {
@@ -46,9 +96,17 @@ const HomePage = ({ scrollTo }) => {
     fetchData();
   }, []);
 
+  // Разделяем модели по брендам
   const exeedModels = models.filter(model => model.brand === 'EXEED');
   const exlantixModels = models.filter(model => model.brand === 'EXLANTIX');
 
+  // Компонент карточки модели - ИСПРАВЛЕННАЯ АДАПТИВНОСТЬ
+// Компонент карточки модели с ФИКСИРОВАННОЙ ВЫСОТОЙ 600px
+// КОМПОНЕНТ для overlay характеристик
+// КОМПОНЕНТ для overlay характеристик (адаптивный, с шестерёнкой и каплей для EXLANTIX)
+// Современный адаптивный оверлей характеристик модели
+// Современный адаптивный оверлей характеристик модели (обновлённая шестерёнка)
+// Современный адаптивный оверлей характеристик модели (финальная версия)
 const ModelSpecsOverlay = ({ model }) => {
   const getModelSpecs = (modelName) => {
     switch (modelName) {
@@ -72,6 +130,7 @@ const ModelSpecsOverlay = ({ model }) => {
   const specs = getModelSpecs(model.name);
   const isExlantix = model.name?.startsWith('EXLANTIX');
 
+  // Иконки (встроенные SVG)
   const icons = {
     power: (
       <svg viewBox="0 0 24 24" className="w-6 h-6 text-orange-400" fill="currentColor">
@@ -99,6 +158,7 @@ const ModelSpecsOverlay = ({ model }) => {
       </svg>
     ),
     torque: (
+      // ТВОЙ SVG — ровная красивая шестерёнка
     <svg
       viewBox="0 0 24 24"
       className="w-7 h-7 text-orange-400"
@@ -171,15 +231,22 @@ const ModelSpecsOverlay = ({ model }) => {
       </div>
 
       {/* Мобильная сетка */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-white md:hidden">
-        {items.map((item) => (
-          <div key={item.key} className="flex flex-col items-center">
-            <div className="mb-1">{item.icon}</div>
-            <div className="text-[10px] text-gray-300 uppercase tracking-wider">{item.label}</div>
-            <div className="text-base font-semibold">{item.value}</div>
-          </div>
-        ))}
+{/* Мобильная версия — компактная, ровная, в одну линию */}
+<div className="flex justify-between items-end text-white md:hidden px-2 py-2 text-[9px] leading-tight">
+  {items.map((item) => (
+    <div 
+      key={item.key} 
+      className="flex flex-col items-center justify-end flex-1 min-w-0 text-center space-y-[2px]"
+    >
+      <div className="w-5 h-5 flex items-center justify-center text-orange-400">
+        {React.cloneElement(item.icon, { className: 'w-5 h-5 text-orange-400' })}
       </div>
+      <div className="text-[8px] text-gray-300 uppercase tracking-wider">{item.label}</div>
+      <div className="text-[10px] font-semibold">{item.value}</div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };
@@ -241,19 +308,20 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       
       {/* Выгода */}
       <div className="mt-4 lg:mt-6">
-        <p className="text-base lg:text-lg font-semibold text-orange-500 mb-2">
-          {(() => {
-            switch(model.name) {
-              case 'EXEED LX': return 'Выгода до 610 000 ₽';
-              case 'EXEED TXL': return 'Выгода до 650 000 ₽';
-              case 'EXEED RX': return 'Выгода до 900 000 ₽';
-              case 'EXEED VX': return 'Выгода до 1 475 000 ₽';
-              case 'EXLANTIX ET': return 'Выгода до 300 000 ₽';
-              case 'EXLANTIX ES': return 'Выгода до 300 000 ₽';
-              default: return 'Специальные условия';
-            }
-          })()}
-        </p>
+      <p className="text-base lg:text-lg font-semibold text-orange-500 mb-2">
+        {(() => {
+          const modelName = (model?.name || '').trim().toUpperCase();
+          switch (modelName) {
+            case 'EXEED LX FL': return 'Выгода до 610 000 ₽';
+            case 'EXEED TXL FL': return 'Выгода до 650 000 ₽';
+            case 'EXEED RX': return 'Выгода до 900 000 ₽';
+            case 'EXEED VX FL': return 'Выгода до 1 475 000 ₽';
+            case 'EXLANTIX ET': return 'Выгода до 300 000 ₽';
+            case 'EXLANTIX ES': return 'Выгода до 300 000 ₽';
+            default: return 'Специальные условия';
+          }
+        })()}
+      </p>
         
         {/* Описание */}
         <p className="text-sm lg:text-lg text-gray-700 leading-relaxed mb-4 lg:mb-6">
@@ -282,7 +350,7 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       <div className="space-y-3 mb-4 lg:mb-6">
         {(() => {
           switch(model.name) {
-            case 'EXEED LX':
+            case 'EXEED LX FL':
               return (
                 <>
                   <div className="flex items-center space-x-3 text-gray-700">
@@ -295,7 +363,7 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
                   </div>
                 </>
               );
-            case 'EXEED TXL':
+            case 'EXEED TXL FL':
               return (
                 <>
                   <div className="flex items-center space-x-3 text-gray-700">
@@ -321,7 +389,7 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
                   </div>
                 </>
               );
-            case 'EXEED VX':
+            case 'EXEED VX FL':
               return (
                 <>
                   <div className="flex items-center space-x-3 text-gray-700">
@@ -378,9 +446,25 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
       </div>
       
       {/* Цена */}
-      <p className="font-bold text-gray-900 inline-block border-b-4 border-orange-400 pb-1" style={{ fontSize: "1.8em" }}>
-        {model.price}
-      </p>
+      <div className="flex items-baseline gap-3 mt-4">
+        <p className="text-2xl lg:text-3xl font-bold text-black">
+          {model.price}
+        </p>
+        {(() => {
+          switch (model.name) {
+            case 'EXEED LX FL': return <span className="text-gray-500 line-through text-xl">2 790 000 ₽</span>;
+            case 'EXEED TXL FL': return <span className="text-gray-500 line-through text-xl">3 600 000 ₽</span>;
+            case 'EXEED RX': return <span className="text-gray-500 line-through text-xl">4 550 000 ₽</span>;
+            case 'EXEED VX FL': return <span className="text-gray-500 line-through text-xl">6 040 000 ₽</span>;
+            case 'EXLANTIX ET': return <span className="text-gray-500 line-through text-xl">6 600 000 ₽</span>;
+            case 'EXLANTIX ES': return <span className="text-gray-500 line-through text-xl">5 990 000 ₽</span>;
+            default: return null;
+          }
+        })()}
+      </div>
+
+      <hr className="border-t-2 border-orange-500 mt-3" />
+
     </div>
   </div>
 );
@@ -472,13 +556,11 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
         </div>
       </section>
 
-<section id="test-drive" className="py-20 bg-gradient-to-b from-[#ff9335] to-[#e86b1c]">
+<section id="test-drive" className="py-20 bg-gradient-to-b from-[#ff9335] to-[#e86b1c] relative overflow-hidden">
   <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-12">
     
-    {/* Левая часть — изображения и заголовок */}
+    {/* Левая часть */}
     <div className="flex-1 flex flex-col items-center lg:items-start justify-center text-center lg:text-left space-y-8">
-      
-      {/* Горизонтальные изображения рядом */}
       <div className="hidden sm:flex items-center justify-center gap-4 mb-6">
         <img
           src="/static/images/testdrive/main-banner.webp"
@@ -494,7 +576,6 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
         />
       </div>
 
-      {/* Заголовок с эффектом тени */}
       <h2
         className="text-[46px] font-heading font-extrabold tracking-tight text-white text-center lg:text-left"
         style={{
@@ -510,21 +591,58 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
     </div>
 
     {/* Правая часть — форма */}
-    <div className="flex-1 bg-white/95 text-black p-10 border border-gray-300 rounded-xl shadow-sm backdrop-blur-sm">
+    <div className="flex-1 bg-white/95 text-black p-10 border border-gray-300 rounded-xl shadow-sm backdrop-blur-sm relative overflow-hidden">
       <h3 className="text-[30px] font-bold text-center mb-6 tracking-tight text-black">
         Пробная поездка
       </h3>
       <p className="text-sm text-gray-800 mb-6 text-center">
         Оставьте номер — наш специалист свяжется с вами и подберёт удобное время для поездки.
       </p>
-      <form className="space-y-6">
-        <input
-          type="tel"
-          placeholder="+7 (___) ___-__-__"
-          className="w-full border border-gray-300 rounded-md bg-white px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-300"
-        />
-        
-        {/* Кнопка */}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!validateForm()) return;
+          setShowSuccess(true);
+        }}
+        className="space-y-6"
+      >
+        <div>
+          <input
+            type="tel"
+            inputMode="numeric"
+            placeholder="+7 (___) ___-__-__"
+            value={formData.phone}
+            onChange={(e) => {
+              let digits = e.target.value.replace(/\D/g, "");
+              if (digits.length > 11) digits = digits.slice(0, 11);
+
+              let formatted = "+7";
+              if (digits.length > 1) formatted += ` (${digits.slice(1, 4)}`;
+              if (digits.length >= 4) formatted += `) ${digits.slice(4, 7)}`;
+              if (digits.length >= 7) formatted += `-${digits.slice(7, 9)}`;
+              if (digits.length >= 9) formatted += `-${digits.slice(9, 11)}`;
+
+              setFormData({ phone: formatted });
+            }}
+            maxLength={18}
+            className="w-full border border-gray-300 rounded-md bg-white px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-300 font-mono tracking-wide"
+          />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+        </div>
+
+        <div className="pt-2 w-full flex justify-center">
+          <div className="inline-block w-full max-w-[100%] overflow-hidden">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              onChange={setCaptcha}
+            />
+          </div>
+        </div>
+        {errors.captcha && (
+          <p className="text-red-400 text-sm text-center">{errors.captcha}</p>
+        )}
+
         <button
           type="submit"
           className="w-full bg-black text-white py-3 font-semibold text-base rounded-md border border-black transition-all duration-500 hover:bg-white hover:text-black"
@@ -533,18 +651,40 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
         </button>
 
         <p className="text-xs text-gray-600 text-center leading-snug">
-          Отправляя форму, вы соглашаетесь с{' '}
-          <a
-            href="#"
-            className="underline hover:text-black transition-colors duration-200"
-          >
+          Отправляя форму, вы соглашаетесь с{" "}
+          <a href="#" className="underline hover:text-black transition-colors duration-200">
             политикой обработки персональных данных
-          </a>
-          .
+          </a>.
         </p>
       </form>
     </div>
   </div>
+
+  {/* Всплывающее окно УСПЕХА */}
+  {showSuccess && (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
+      <div className="bg-[#1f1f1f] text-white rounded-2xl px-8 py-10 max-w-sm w-[90%] text-center shadow-xl">
+        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold mb-2">Заявка успешно отправлена!</h3>
+        <p className="text-gray-300 mb-6">Мы свяжемся с вами в ближайшее время.</p>
+        <button
+          onClick={() => {
+            setShowSuccess(false);
+            setFormData({ phone: "" });
+            setCaptcha(null);
+            setErrors({});
+          }}
+          className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-semibold transition"
+        >
+          Закрыть
+        </button>
+      </div>
+    </div>
+  )}
 </section>
 
 
@@ -777,7 +917,10 @@ const ModelCard = ({ model, index, isExlantix = false }) => (
 
       {/* Кнопка */}
       <div className="flex justify-center lg:justify-start">
-        <button className="mt-10 w-full max-w-md lg:w-[320px] h-[52px] rounded-md bg-black text-white text-[15px] font-semibold tracking-wide border border-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-black">
+        <button
+          onClick={() => openModal('callback')}
+          className="mt-10 w-full max-w-md lg:w-[320px] h-[52px] rounded-md bg-black text-white text-[15px] font-semibold tracking-wide border border-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-black"
+        >
           РАССЧИТАТЬ ТРЕЙД-ИН
         </button>
       </div>
